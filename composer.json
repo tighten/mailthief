@@ -1,0 +1,17 @@
+{
+    "name": "adamwathan/mailthief",
+    "description": "A fake Mailer for Laravel applications that takes the pain out of testing mail.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Adam Wathan",
+            "email": "adam.wathan@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "MailThief\\": "src/"
+        }
+    }
+}
