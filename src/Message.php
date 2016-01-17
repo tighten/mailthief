@@ -35,12 +35,7 @@ class Message
 
     public function containsRecipient($email)
     {
-        foreach ($this->to as $key => $value) {
-            if ($email === $key || $email === $value) {
-                return true;
-            }
-        }
-        return false;
+        return $this->to->has($email) || $this->to->contains($email);
     }
 
     // @todo
