@@ -30,7 +30,7 @@ class MailThief implements Mailer
 
     public function send($view, array $data, $callback)
     {
-        $message = new Message($view, $data);
+        $message = new Message($view, $data, $this->views);
         $callback($message);
         $this->messages[] = $message;
     }
@@ -55,7 +55,12 @@ class MailThief implements Mailer
     public function hasMessageFor($email)
     {
         return $this->messages->contains(function ($i, $message) use ($email) {
-            return $message->containsRecipient($email);
+            return $message->hasRecipient($email);
         });
+    }
+
+    public function lastMessage()
+    {
+        return $this->messages->last();
     }
 }

@@ -4,15 +4,18 @@ namespace MailThief;
 
 class Message
 {
+    private $views;
+
     public $view;
     public $data;
     public $to;
     public $subject;
 
-    public function __construct($view, $data)
+    public function __construct($view, $data, $views)
     {
         $this->view = $view;
         $this->data = $data;
+        $this->views = $views;
         $this->to = collect();
     }
 
@@ -33,9 +36,19 @@ class Message
         return $this;
     }
 
-    public function containsRecipient($email)
+    public function hasRecipient($email)
     {
         return $this->to->has($email) || $this->to->contains($email);
+    }
+
+    public function contains($text)
+    {
+        return str_contains($this->getBody(), $text);
+    }
+
+    public function getBody()
+    {
+        return $this->views->make($this->view, $this->data)->render();
     }
 
     // @todo
