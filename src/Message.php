@@ -2,6 +2,8 @@
 
 namespace MailThief;
 
+use Exception;
+
 class Message
 {
     private $views;
@@ -10,6 +12,7 @@ class Message
     public $data;
     public $to;
     public $subject;
+    public $reply_to;
 
     public function __construct($view, $data, $views)
     {
@@ -74,7 +77,7 @@ class Message
 
     public function replyTo($address, $name = null)
     {
-        throw new Exception("Method 'replyTo' is not implemented yet.");
+        $this->reply_to = $address;
     }
 
     public function priority($level)
