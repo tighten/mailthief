@@ -1,5 +1,5 @@
 {
-    "name": "adamwathan/mailthief",
+    "name": "tightenco/mailthief",
     "description": "A fake Mailer for Laravel applications that takes the pain out of testing mail.",
     "license": "MIT",
     "authors": [
