@@ -103,7 +103,7 @@ class Message
             $address = $name ? [$address => $name] : [$address];
         }
 
-        $this->from = $address;
+        $this->from = collect($address);
 
         return $this;
     }
@@ -114,7 +114,7 @@ class Message
             $address = $name ? [$address => $name] : [$address];
         }
 
-        $this->sender = $address;
+        $this->sender = collect($address);
 
         return $this;
     }

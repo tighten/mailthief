@@ -8,7 +8,13 @@
             "email": "adam.wathan@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "laravel/framework": "5.2.*|5.3.*"
+    },
+    "require-dev": {
+        "mockery/mockery": "^0.9.5",
+        "phpunit/phpunit": "^5.4"
+    },
     "autoload": {
         "psr-4": {
             "MailThief\\": "src/"
