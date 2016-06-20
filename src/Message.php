@@ -3,11 +3,12 @@
 namespace MailThief;
 
 use Exception;
+use Illuminate\Support\Arr;
 
 class Message
 {
-    public $body;
-    public $view;
+    private $view;
+
     public $data;
     public $subject;
     public $from;
@@ -20,9 +21,8 @@ class Message
     public $attachments;
     public $delay = 0;
 
-    public function __construct($body, $view = null, $data = [])
+    public function __construct($view, $data)
     {
-        $this->body = $body;
         $this->view = $view;
         $this->data = $data;
         $this->to = collect();
@@ -32,15 +32,19 @@ class Message
         $this->attachments = collect();
     }
 
-    public static function fromView($view, $data, $views)
+    public static function fromView($view, $data)
     {
-        $body = $views->make($view, $data)->render();
-        return new self($body, $view, $data);
+        return new self($view, $data);
     }
 
     public static function fromRaw($body)
     {
-        return new self($body);
+        return new self(['raw' => $body], []);
+    }
+
+    public function getBody($part = 'html')
+    {
+        return Arr::get($this->view, $part, Arr::first($this->view));
     }
 
     public function subject($subject)
@@ -131,9 +135,9 @@ class Message
         return $this->to->merge($this->cc)->merge($this->bcc);
     }
 
-    public function contains($text)
+    public function contains($text, $part = 'html')
     {
-        return str_contains($this->body, $text);
+        return str_contains($this->getBody($part), $text);
     }
 
     public function attach($pathToFile, array $options = [])
