@@ -39,7 +39,8 @@ class MailThief implements Mailer
 
     public function failures()
     {
-        throw new Exception("Method 'failures' is not implemented yet.");
+        // Impossible to detect failed recipients since no mail is actually sent.
+        return [];
     }
 
     public function queue($view, array $data, $callback, $queue = null)
