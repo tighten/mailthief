@@ -18,6 +18,7 @@ class Message
     public $reply_to;
     public $priority;
     public $attachments;
+    public $delay = 0;
 
     public function __construct($body, $view = null, $data = [])
     {

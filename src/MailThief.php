@@ -16,6 +16,7 @@ class MailThief implements Mailer
     {
         $this->views = $views;
         $this->messages = collect();
+        $this->later = collect();
     }
 
     public function hijack()
@@ -52,7 +53,10 @@ class MailThief implements Mailer
 
     public function later($delay, $view, array $data, $callback, $queue = null)
     {
-        throw new Exception("Method 'later' is not implemented yet.");
+        $message = Message::fromView($view, $data, $this->views);
+        $message->delay = $delay;
+        $callback($message);
+        $this->later[] = $message;
     }
 
     public function hasMessageFor($email)
