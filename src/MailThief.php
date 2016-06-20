@@ -25,12 +25,14 @@ class MailThief implements Mailer
 
     public function raw($text, $callback)
     {
-        throw new Exception("Method 'raw' is not implemented yet.");
+        $message = Message::fromRaw($text);
+        $callback($message);
+        $this->messages[] = $message;
     }
 
     public function send($view, array $data, $callback)
     {
-        $message = new Message($view, $data, $this->views);
+        $message = Message::fromView($view, $data, $this->views);
         $callback($message);
         $this->messages[] = $message;
     }

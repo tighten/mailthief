@@ -6,20 +6,40 @@ use Exception;
 
 class Message
 {
-    private $views;
-
+    public $body;
     public $view;
     public $data;
-    public $to;
     public $subject;
+    public $from;
+    public $sender;
+    public $to;
+    public $cc;
+    public $bcc;
     public $reply_to;
+    public $priority;
+    public $attachments;
 
-    public function __construct($view, $data, $views)
+    public function __construct($body, $view = null, $data = [])
     {
+        $this->body = $body;
         $this->view = $view;
         $this->data = $data;
-        $this->views = $views;
         $this->to = collect();
+        $this->cc = collect();
+        $this->bcc = collect();
+        $this->reply_to = collect();
+        $this->attachments = collect();
+    }
+
+    public static function fromView($view, $data, $views)
+    {
+        $body = $views->make($view, $data)->render();
+        return new self($body, $view, $data);
+    }
+
+    public static function fromRaw($body)
+    {
+        return new self($body);
     }
 
     public function subject($subject)
@@ -39,64 +59,96 @@ class Message
         return $this;
     }
 
-    public function hasRecipient($email)
-    {
-        return $this->to->has($email) || $this->to->contains($email);
-    }
-
-    public function contains($text)
-    {
-        return str_contains($this->getBody(), $text);
-    }
-
-    public function getBody()
-    {
-        return $this->views->make($this->view, $this->data)->render();
-    }
-
-    // @todo
-    public function from($address, $name = null)
-    {
-        throw new Exception("Method 'from' is not implemented yet.");
-    }
-
-    public function sender($address, $name = null)
-    {
-        throw new Exception("Method 'sender' is not implemented yet.");
-    }
-
     public function cc($address, $name = null)
     {
-        throw new Exception("Method 'cc' is not implemented yet.");
+        if (! is_array($address)) {
+            $address = $name ? [$address => $name] : [$address];
+        }
+
+        $this->cc = $this->cc->merge($address);
+
+        return $this;
     }
 
     public function bcc($address, $name = null)
     {
-        throw new Exception("Method 'bcc' is not implemented yet.");
+        if (! is_array($address)) {
+            $address = $name ? [$address => $name] : [$address];
+        }
+
+        $this->bcc = $this->bcc->merge($address);
+
+        return $this;
     }
 
     public function replyTo($address, $name = null)
     {
-        $this->reply_to = $address;
+        if (! is_array($address)) {
+            $address = $name ? [$address => $name] : [$address];
+        }
+
+        $this->reply_to = $this->reply_to->merge($address);
+
+        return $this;
+    }
+
+    public function from($address, $name = null)
+    {
+        if (! is_array($address)) {
+            $address = $name ? [$address => $name] : [$address];
+        }
+
+        $this->from = $address;
+
+        return $this;
+    }
+
+    public function sender($address, $name = null)
+    {
+        if (! is_array($address)) {
+            $address = $name ? [$address => $name] : [$address];
+        }
+
+        $this->sender = $address;
+
+        return $this;
     }
 
     public function priority($level)
     {
-        throw new Exception("Method 'priority' is not implemented yet.");
+        $this->priority = $level;
+        return $this;
+    }
+
+    public function hasRecipient($email)
+    {
+        return $this->recipients()->has($email) || $this->recipients()->contains($email);
+    }
+
+    public function recipients()
+    {
+        return $this->to->merge($this->cc)->merge($this->bcc);
+    }
+
+    public function contains($text)
+    {
+        return str_contains($this->body, $text);
     }
 
     public function attach($pathToFile, array $options = [])
     {
-        throw new Exception("Method 'attach' is not implemented yet.");
+        $this->attachments[] = ['path' => $pathToFile, 'options' => $options];
+        return $this;
     }
 
     public function attachData($data, $name, array $options = [])
     {
-        throw new Exception("Method 'attachData' is not implemented yet.");
+        $this->attachments[] = ['data' => $data, 'name' => $name, 'options' => $options];
+        return $this;
     }
 
     public function getSwiftMessage()
     {
-        throw new Exception("Method 'getSwiftMessage' is not implemented yet.");
+        throw new Exception("Cannot get Swift message from MailThief message.");
     }
 }
