@@ -249,4 +249,18 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('invoice.pdf', $mailer->lastMessage()->attachments[0]['path']);
     }
+
+
+    public function test_cc_and_bcc_are_considered_recipients()
+    {
+        $mailer = $this->getMailThief();
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('john@example.com')->cc('jane@example.com')->bcc('joe@example.com');
+        });
+
+        $message = $mailer->lastMessage();
+        $this->assertTrue($message->hasRecipient('jane@example.com'));
+        $this->assertTrue($message->hasRecipient('joe@example.com'));
+    }
 }
