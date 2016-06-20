@@ -31,6 +31,7 @@ class RegistrationTest extends TestCase
 {
     public function test_new_users_are_sent_a_welcome_email()
     {
+        // Block and intercept outgoing mail, important!
         MailThief::hijack();
 
         $this->post('register', [
@@ -39,10 +40,18 @@ class RegistrationTest extends TestCase
             'password' => 'secret',
         ]);
 
+        // Check that an email was sent to this email address
         $this->assertTrue(MailThief::hasMessageFor('john@example.com'));
+
+        // BCC addresses are included too
         $this->assertTrue(MailThief::hasMessageFor('notifications@example.com'));
+
+        // Make sure the email has the correct subject
         $this->assertEquals('Welcome to my app!', MailThief::lastMessage()->subject);
-        $this->assertEquals(['noreply@example.com'], MailThief::lastMessage()->from);
+
+        // Make sure the email was sent from the correct address
+        // (`from` can be a list, so we return it as a collection)
+        $this->assertEquals(['noreply@example.com'], MailThief::lastMessage()->from->first());
     }
 }
 ```
