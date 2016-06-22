@@ -4,6 +4,12 @@ MailThief is a fake mailer for Laravel applications that makes it easy to test m
 
 ## Quickstart
 
+Installation;
+
+```bash
+composer require tightenco/mailthief
+```
+
 Example route:
 
 ```php
@@ -12,7 +18,7 @@ Route::post('register', function () {
 
     Mail::send('emails.welcome', [], function ($m) {
         $email = request('email');
-        $m->to($email)
+        $m->to($email),
         $m->subject('Welcome to my app!');
         $m->from('noreply@example.com');
         $m->bcc('notifications@example.com');
@@ -21,6 +27,8 @@ Route::post('register', function () {
     // <snip> Return response </snip>
 });
 ```
+
+If you're copying this sample test, remember to create an email view at `resources/views/emails/welcome.blade.php`.
 
 Example test:
 
@@ -51,7 +59,7 @@ class RegistrationTest extends TestCase
 
         // Make sure the email was sent from the correct address
         // (`from` can be a list, so we return it as a collection)
-        $this->assertEquals(['noreply@example.com'], MailThief::lastMessage()->from->first());
+        $this->assertEquals('noreply@example.com', MailThief::lastMessage()->from->first());
     }
 }
 ```
