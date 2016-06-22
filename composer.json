@@ -12,6 +12,7 @@
         "laravel/framework": "5.2.*|5.3.*"
     },
     "require-dev": {
+        "php": "^7.0",
         "mockery/mockery": "^0.9.5",
         "phpunit/phpunit": "^5.4"
     },
