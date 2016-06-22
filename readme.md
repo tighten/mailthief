@@ -1,3 +1,7 @@
+[![Codeship Status for tightenco/mailthief](https://codeship.com/projects/860d2030-1ae7-0134-a954-66ed86225da0/status?branch=master)](https://codeship.com/projects/159501)
+
+![](https://raw.githubusercontent.com/tightenco/mailthief/master/mailthief-logo.png)
+
 # MailThief
 
 MailThief is a fake mailer for Laravel applications that makes it easy to test mail without actually sending any emails.
