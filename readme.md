@@ -4,7 +4,7 @@ MailThief is a fake mailer for Laravel applications that makes it easy to test m
 
 ## Quickstart
 
-Installation;
+Installation:
 
 ```bash
 composer require tightenco/mailthief
