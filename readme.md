@@ -11,7 +11,7 @@ MailThief is a fake mailer for Laravel applications that makes it easy to test m
 Installation:
 
 ```bash
-composer require tightenco/mailthief
+composer require tightenco/mailthief --dev
 ```
 
 Example route:
