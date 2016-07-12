@@ -25,6 +25,7 @@ class MailThief implements Mailer, MailQueue
     public function hijack()
     {
         Mail::swap($this);
+        app()->instance(Mailer::class, $this);
     }
 
     public function raw($text, $callback)
