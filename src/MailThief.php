@@ -6,9 +6,10 @@ use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Contracts\Mail\Mailer;
+use Illuminate\Contracts\Mail\MailQueue;
 use Illuminate\Contracts\View\Factory;
 
-class MailThief implements Mailer
+class MailThief implements Mailer, MailQueue
 {
     private $views;
     public $messages;
