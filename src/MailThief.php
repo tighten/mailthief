@@ -2,7 +2,7 @@
 
 namespace MailThief;
 
-use Exception;
+use InvalidArgumentException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Contracts\Mail\Mailer;
