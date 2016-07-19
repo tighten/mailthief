@@ -22,7 +22,7 @@ Route::post('register', function () {
 
     Mail::send('emails.welcome', [], function ($m) {
         $email = request('email');
-        $m->to($email),
+        $m->to($email);
         $m->subject('Welcome to my app!');
         $m->from('noreply@example.com');
         $m->bcc('notifications@example.com');
