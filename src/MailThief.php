@@ -2,7 +2,7 @@
 
 namespace MailThief;
 
-use Exception;
+use InvalidArgumentException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Contracts\Mail\Mailer;
@@ -101,7 +101,7 @@ class MailThief implements Mailer, MailQueue
 
     public function hasMessageFor($email)
     {
-        return $this->messages->contains(function ($i, $message) use ($email) {
+        return $this->messages->contains(function ($i, Message $message) use ($email) {
             return $message->hasRecipient($email);
         });
     }
