@@ -22,6 +22,11 @@ class MailThief implements Mailer, MailQueue
         $this->later = collect();
     }
 
+    public static function instance()
+    {
+        return app(MailThief::class);
+    }
+
     public function hijack()
     {
         Mail::swap($this);
