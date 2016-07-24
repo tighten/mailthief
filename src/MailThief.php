@@ -102,7 +102,7 @@ class MailThief implements Mailer, MailQueue
 
     public function hasMessageFor($email)
     {
-        return $this->messages->contains(function ($i, Message $message) use ($email) {
+        return $this->messages->contains(function (Message $message) use ($email) {
             return $message->hasRecipient($email);
         });
     }
