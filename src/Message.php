@@ -44,7 +44,7 @@ class Message
 
     public function getBody($part = 'html')
     {
-        return Arr::get($this->view, $part, Arr::first($this->view));
+        return Arr::get($this->view, $part, Arr::first($this->view, function ($value) { return $value;}));
     }
 
     public function subject($subject)
@@ -155,5 +155,10 @@ class Message
     public function getSwiftMessage()
     {
         throw new Exception("Cannot get Swift message from MailThief message.");
+    }
+
+    public function getView($part = '')
+    {
+        return (empty($part)) ? $this->view : $this->getBody($part);
     }
 }
