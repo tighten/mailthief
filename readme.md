@@ -67,7 +67,7 @@ class RegistrationTest extends TestCase
         
         // Make sure the email contains text in the body of the message
         // Default is to search the html rendered view
-        $this->assertT1\rue(MailThief::lastMessage()->contains('Some text in the message'));
+        $this->assertTrue(MailThief::lastMessage()->contains('Some text in the message'));
         // To search in the raw text
         $this->assertTrue(MailThief::lastMessage()->contains('Some text in the message', 'raw'));
     }
