@@ -64,6 +64,12 @@ class RegistrationTest extends TestCase
         // Make sure the email was sent from the correct address
         // (`from` can be a list, so we return it as a collection)
         $this->assertEquals('noreply@example.com', MailThief::lastMessage()->from->first());
+        
+        // Make sure the email contains text in the body of the message
+        // Default is to search the html rendered view
+        $this->assertTrue(MailThief::lastMessage()->contains('Some text in the message'));
+        // To search in the raw text
+        $this->assertTrue(MailThief::lastMessage()->contains('Some text in the message', 'raw'));
     }
 }
 ```
