@@ -44,7 +44,7 @@ class Message
 
     public function getBody($part = 'html')
     {
-        return Arr::get($this->view, $part, Arr::first($this->view));
+        return Arr::get($this->view, $part, reset($this->view));
     }
 
     public function subject($subject)

@@ -285,4 +285,26 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($mailer->lastMessage()->contains('kind', 'raw'));
     }
+
+    public function test_get_body_html()
+    {
+        $mailer = $this->getMailThief();
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('john@example.com');
+        });
+
+        $this->assertEquals('stubbed rendered view', $mailer->lastMessage()->getBody());
+    }
+
+    public function test_get_body_raw()
+    {
+        $mailer = $this->getMailThief();
+
+        $mailer->raw('Raw text content', function ($m) {
+            $m->to('john@example.com');
+        });
+
+        $this->assertEquals('Raw text content', $mailer->lastMessage()->getBody());
+    }
 }
