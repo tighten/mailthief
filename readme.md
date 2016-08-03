@@ -38,14 +38,15 @@ Example test:
 
 ```php
 use MailThief\Facades\MailThief;
+use MailThief\Testing\InteractsWithMail;
 
 class RegistrationTest extends TestCase
 {
+    // Provides convenient testing traits and initializes MailThief
+    use InteractsWithMail;
+
     public function test_new_users_are_sent_a_welcome_email()
     {
-        // Block and intercept outgoing mail, important!
-        MailThief::hijack();
-
         $this->post('register', [
             'name' => 'John Doe',
             'email' => 'john@example.com',
@@ -53,17 +54,17 @@ class RegistrationTest extends TestCase
         ]);
 
         // Check that an email was sent to this email address
-        $this->assertTrue(MailThief::hasMessageFor('john@example.com'));
+        $this->seeMessageFor('john@example.com');
 
         // BCC addresses are included too
-        $this->assertTrue(MailThief::hasMessageFor('notifications@example.com'));
+        $this->seeMessageFor('notifications@example.com');
 
         // Make sure the email has the correct subject
-        $this->assertEquals('Welcome to my app!', MailThief::lastMessage()->subject);
+        $this->seeMessageWithSubject('Welcome to my app!');
 
         // Make sure the email was sent from the correct address
         // (`from` can be a list, so we return it as a collection)
-        $this->assertEquals('noreply@example.com', MailThief::lastMessage()->from->first());
+        $this->seeMessageFrom('noreply@example.com');
         
         // Make sure the email contains text in the body of the message
         // Default is to search the html rendered view
