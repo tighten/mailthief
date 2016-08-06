@@ -9,8 +9,8 @@
         }
     ],
     "require": {
-        "illuminate/mail": "^5.1",
-        "illuminate/view": "^5.1"
+        "illuminate/mail": "^5.3",
+        "illuminate/view": "^5.3"
     },
     "require-dev": {
         "mockery/mockery": "^0.9.5",
@@ -20,5 +20,7 @@
         "psr-4": {
             "MailThief\\": "src/"
         }
-    }
+    },
+
+    "minimum-stability": "dev"
 }
