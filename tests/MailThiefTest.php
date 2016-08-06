@@ -9,10 +9,15 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
     {
         $factory = Mockery::mock(Factory::class);
         $factory->shouldReceive('make')->andReturnUsing(function ($template, $data) {
-            return new class {
+            return new class($template) {
+                private $template = null;
+                public function __construct($template) { // to handle passed template name
+                    $this->template = $template;
+                }
+
                 public function render()
                 {
-                    return 'stubbed rendered view';
+                    return 'stubbed rendered view ' . $this->template;
                 }
             };
         });
@@ -262,5 +267,41 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
         $message = $mailer->lastMessage();
         $this->assertTrue($message->hasRecipient('jane@example.com'));
         $this->assertTrue($message->hasRecipient('joe@example.com'));
+    }
+
+    public function test_can_use_mailables()
+    {
+        $mailer = $this->getMailThief();
+
+        $mailableMailerTo = $mailer->to('joe@example.com');
+        $mailableMailerBcc = $mailer->bcc('joe@example.com');
+        $this->assertInstanceOf(\MailThief\MailThiefMailable::class, $mailableMailerTo);
+        $this->assertInstanceOf(\MailThief\MailThiefMailable::class, $mailableMailerBcc);
+    }
+
+    public function test_mailables_sends()
+    {
+        $mailer = $this->getMailThief();
+        
+        $mailer
+            ->to('joe@example.com')
+            ->send(new MailthiefTestSampleMailable);
+
+        $this->assertEquals(['joe@example.com'], $mailer->lastMessage()->to->all());
+        $this->assertEquals('Sample subject', $mailer->lastMessage()->subject);
+        $this->assertTrue($mailer->lastMessage()->contains('example-view'));
+    }
+}
+
+
+
+class MailthiefTestSampleMailable extends Illuminate\Mail\Mailable
+{
+
+    public function build()
+    {
+        return $this
+            ->subject('Sample subject')
+            ->view('example-view', []);
     }
 }
