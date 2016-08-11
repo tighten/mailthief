@@ -37,7 +37,6 @@ If you're copying this sample test, remember to create an email view at `resourc
 Example test:
 
 ```php
-use MailThief\Facades\MailThief;
 use MailThief\Testing\InteractsWithMail;
 
 class RegistrationTest extends TestCase
@@ -65,12 +64,12 @@ class RegistrationTest extends TestCase
         // Make sure the email was sent from the correct address
         // (`from` can be a list, so we return it as a collection)
         $this->seeMessageFrom('noreply@example.com');
-        
+
         // Make sure the email contains text in the body of the message
         // Default is to search the html rendered view
-        $this->assertTrue(MailThief::lastMessage()->contains('Some text in the message'));
+        $this->assertTrue($this->lastMessage()->contains('Some text in the message'));
         // To search in the raw text
-        $this->assertTrue(MailThief::lastMessage()->contains('Some text in the message', 'raw'));
+        $this->assertTrue($this->lastMessage()->contains('Some text in the message', 'raw'));
     }
 }
 ```

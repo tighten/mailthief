@@ -41,7 +41,7 @@ trait InteractsWithMail
     {
         $this->seeMessage();
 
-        $lastSubject = $this->getMailer()->lastMessage()->subject;
+        $lastSubject = $this->lastMessage()->subject;
 
         $this->assertEquals(
             $subject,
@@ -60,7 +60,7 @@ trait InteractsWithMail
     {
         $this->seeMessage();
 
-        $from = $this->getMailer()->lastMessage()->from->first();
+        $from = $this->lastMessage()->from->first();
 
         $this->assertEquals(
             $email,
@@ -75,10 +75,15 @@ trait InteractsWithMail
         return $this;
     }
 
+    public function lastMessage()
+    {
+        return $this->getMailer()->lastMessage();
+    }
+
     protected function seeMessage()
     {
         $this->assertNotNull(
-            $this->getMailer()->lastMessage(),
+            $this->lastMessage(),
             'Unable to find a generated email.'
         );
 
