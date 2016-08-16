@@ -263,4 +263,20 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($message->hasRecipient('jane@example.com'));
         $this->assertTrue($message->hasRecipient('joe@example.com'));
     }
+
+    public function test_undefined_mailthief_message_methods_do_not_cause_error()
+    {
+        $mailer = $this->getMailThief();
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->subject('First message')->addPart('html content', 'text/html');
+        });
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->subject('Second message');
+            $m->addPart('html content', 'text/html');
+        });
+
+        $this->assertEquals('Second message', $mailer->lastMessage()->subject);
+    }
 }
