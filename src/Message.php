@@ -32,6 +32,11 @@ class Message
         $this->attachments = collect();
     }
 
+    public function __call($name, $arguments)
+    {
+        return $this;
+    }
+
     public static function fromView($view, $data)
     {
         return new self($view, $data);
