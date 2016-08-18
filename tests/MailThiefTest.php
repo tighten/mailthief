@@ -318,7 +318,7 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
 
         $mailer->send('example-view', [], function ($m) {
             $m->subject('Second message');
-            $m->addPart('html content', 'text/html');
+            $this->assertEquals($m, $m->addParts('html content', 'text/html'));
         });
 
         $this->assertEquals('Second message', $mailer->lastMessage()->subject);
