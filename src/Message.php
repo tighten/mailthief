@@ -20,6 +20,17 @@ class Message
     public $priority;
     public $attachments;
     public $delay = 0;
+    /**
+     * Methods that are available in Laravel but not provided by MailThief
+     * @var array
+     */
+    public $valid_methods = [
+        'addPart',
+        'setReadReceiptTo',
+        'setCharset',
+        'setMaxLineLength',
+        'attachSigner',
+    ];
 
     public function __construct($view, $data)
     {
@@ -34,7 +45,11 @@ class Message
 
     public function __call($name, $arguments)
     {
-        return $this;
+        if (in_array(strtolower($name), array_map('strtolower', $this->valid_methods))) {
+            return $this;
+        }
+
+        throw new Exception("Invalid method ($name) called");
     }
 
     public static function fromView($view, $data)

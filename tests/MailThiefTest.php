@@ -308,19 +308,26 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Raw text content', $mailer->lastMessage()->getBody());
     }
 
-    public function test_undefined_mailthief_message_methods_do_not_cause_error()
+    public function test_valid_message_method_not_in_mailthief_return_this_instance()
     {
         $mailer = $this->getMailThief();
 
         $mailer->send('example-view', [], function ($m) {
-            $m->subject('First message')->addPart('html content', 'text/html');
+            $m->subject('Second message');
+            $this->assertEquals($m, $m->addPart('html content', 'text/html'));
         });
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function test_invalid_message_method_in_mailthief_causes_exception()
+    {
+        $mailer = $this->getMailThief();
 
         $mailer->send('example-view', [], function ($m) {
             $m->subject('Second message');
-            $this->assertEquals($m, $m->addParts('html content', 'text/html'));
+            $m->foo('bar');
         });
-
-        $this->assertEquals('Second message', $mailer->lastMessage()->subject);
     }
 }
