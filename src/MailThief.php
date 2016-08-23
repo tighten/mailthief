@@ -31,14 +31,22 @@ class MailThief implements Mailer, MailQueue
     public function raw($text, $callback)
     {
         $message = Message::fromRaw($text);
-        $callback($message);
+
+        if (is_callable($callback)) {
+            $callback($message);
+        }
+
         $this->messages[] = $message;
     }
 
     public function send($view, array $data, $callback)
     {
         $message = Message::fromView($this->renderViews($view, $data), $data);
-        $callback($message);
+
+        if (is_callable($callback)) {
+            $callback($message);
+        }
+
         $this->messages[] = $message;
     }
 
@@ -95,7 +103,11 @@ class MailThief implements Mailer, MailQueue
     {
         $message = Message::fromView($view, $data);
         $message->delay = $delay;
-        $callback($message);
+
+        if (is_callable($callback)) {
+            $callback($message);
+        }
+
         $this->later[] = $message;
     }
 
