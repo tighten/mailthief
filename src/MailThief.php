@@ -22,6 +22,11 @@ class MailThief implements Mailer, MailQueue
         $this->later = collect();
     }
 
+    public static function instance()
+    {
+        return app(MailThief::class);
+    }
+
     public function hijack()
     {
         Mail::swap($this);
@@ -35,8 +40,9 @@ class MailThief implements Mailer, MailQueue
         $this->messages[] = $message;
     }
 
-    public function send($view, array $data, $callback)
+    public function send($view, array $data = [], $callback = null)
     {
+        $callback = $callback ?: null;
         $message = Message::fromView($this->renderViews($view, $data), $data);
         $callback($message);
         $this->messages[] = $message;
@@ -101,7 +107,7 @@ class MailThief implements Mailer, MailQueue
 
     public function hasMessageFor($email)
     {
-        return $this->messages->contains(function ($i, Message $message) use ($email) {
+        return $this->messages->contains(function (Message $message) use ($email) {
             return $message->hasRecipient($email);
         });
     }
