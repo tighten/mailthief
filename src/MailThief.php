@@ -42,12 +42,7 @@ class MailThief implements Mailer, MailQueue
     public function raw($text, $callback)
     {
         $message = Message::fromRaw($text);
-
-        if (! empty($this->from['address'])) {
-            $message->from($this->from['address'], $this->from['name']);
-        }
-
-        $callback($message);
+        $message = $this->prepareMessage($message, $callback);
         $this->messages[] = $message;
     }
 
@@ -55,12 +50,7 @@ class MailThief implements Mailer, MailQueue
     {
         $callback = $callback ?: null;
         $message = Message::fromView($this->renderViews($view, $data), $data);
-
-        if (! empty($this->from['address'])) {
-            $message->from($this->from['address'], $this->from['name']);
-        }
-
-        $callback($message);
+        $message = $this->prepareMessage($message, $callback);
         $this->messages[] = $message;
     }
 
@@ -117,12 +107,7 @@ class MailThief implements Mailer, MailQueue
     {
         $message = Message::fromView($view, $data);
         $message->delay = $delay;
-
-        if (! empty($this->from['address'])) {
-            $message->from($this->from['address'], $this->from['name']);
-        }
-        
-        $callback($message);
+        $message = $this->prepareMessage($message, $callback);
         $this->later[] = $message;
     }
 
@@ -136,6 +121,17 @@ class MailThief implements Mailer, MailQueue
     public function lastMessage()
     {
         return $this->messages->last();
+    }
+
+    public function prepareMessage($message, $callback)
+    {
+        if (! empty($this->from['address'])) {
+            $message->from($this->from['address'], $this->from['name']);
+        }
+
+        $callback($message);
+
+        return $message;
     }
 
     public function alwaysFrom($address, $name = null)
