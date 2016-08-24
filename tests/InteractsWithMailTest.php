@@ -1,12 +1,20 @@
 <?php
 
-use MailThief\MailThief;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Foundation\Application;
+use MailThief\MailThief;
 use MailThief\Testing\InteractsWithMail;
 
 class InteractsWithMailTest extends PHPUnit_Framework_TestCase
 {
     use InteractsWithMail;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $app = new Application;
+    }
 
     private function getViewFactory()
     {
