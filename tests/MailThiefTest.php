@@ -121,6 +121,33 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['jane@example.com'], $mailer->lastMessage()->from->all());
     }
 
+    public function test_global_from_is_respected()
+    {
+        $mailer = $this->getMailThief();
+        
+        $mailer->alwaysFrom('john@example.com');
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('joe@example.com');
+        });
+
+        $this->assertEquals(['john@example.com'], $mailer->lastMessage()->from->all());
+    }
+
+    public function test_global_from_gets_overwritten_if_specified()
+    {
+        $mailer = $this->getMailThief();
+        
+        $mailer->alwaysFrom('john@example.com');
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('joe@example.com');
+            $m->from(['jane@example.com']);
+        });
+
+        $this->assertEquals(['jane@example.com'], $mailer->lastMessage()->from->all());
+    }
+
     public function test_sender_returns_array_of_senders()
     {
         $mailer = $this->getMailThief();
@@ -202,6 +229,19 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($mailer->hasMessageFor('john@example.com'));
     }
 
+    public function test_global_from_is_respected_when_email_is_queued()
+    {
+        $mailer = $this->getMailThief();
+        
+        $mailer->alwaysFrom('john@example.com');
+
+        $mailer->queue('example-view', [], function ($m) {
+            $m->to('joe@example.com');
+        });
+
+        $this->assertEquals(['john@example.com'], $mailer->lastMessage()->from->all());
+    }
+
     public function test_later_messages_are_marked_with_delay()
     {
         $mailer = $this->getMailThief();
@@ -222,6 +262,19 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
         });
 
         $this->assertFalse($mailer->hasMessageFor('john@example.com'));
+    }
+
+    public function test_global_from_is_respected_when_email_set_to_later_with_a_delay()
+    {
+        $mailer = $this->getMailThief();
+        
+        $mailer->alwaysFrom('john@example.com');
+
+        $mailer->later(10, 'example-view', [], function ($m) {
+            $m->to('joe@example.com');
+        });
+
+        $this->assertEquals(['john@example.com'], $mailer->later->first()->from->all());
     }
 
     public function test_can_retrieve_last_sent_message()
