@@ -202,11 +202,38 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($mailer->hasMessageFor('john@example.com'));
     }
 
+    public function test_queue_on_is_sent_immediately()
+    {
+        $mailer = $this->getMailThief();
+
+        $mailer->queueOn('queue-name', 'example-view', [], function ($m) {
+            $m->to('john@example.com');
+        });
+
+        $mailer->queueOn('queue-name', 'example-view', [], function ($m) {
+            $m->to('john@example2.com');
+        });
+
+        $this->assertTrue($mailer->hasMessageFor('john@example.com'));
+        $this->assertTrue($mailer->hasMessageFor('john@example2.com'));
+    }
+
     public function test_later_messages_are_marked_with_delay()
     {
         $mailer = $this->getMailThief();
 
         $mailer->later(10, 'example-view', [], function ($m) {
+            $m->to('john@example.com');
+        });
+
+        $this->assertEquals(10, $mailer->later->first()->delay);
+    }
+
+    public function test_later_on_messages_are_marked_with_delay()
+    {
+        $mailer = $this->getMailThief();
+
+        $mailer->laterOn('queue-name', 10, 'example-view', [], function ($m) {
             $m->to('john@example.com');
         });
 

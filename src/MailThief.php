@@ -97,12 +97,27 @@ class MailThief implements Mailer, MailQueue
         return $this->send($view, $data, $callback);
     }
 
+    public function onQueue($queue, $view, array $data, $callback)
+    {
+        return $this->queue($view, $data, $callback, $queue);
+    }
+
+    public function queueOn($queue, $view, array $data, $callback)
+    {
+        return $this->queue($view, $data, $callback, $queue);
+    }
+
     public function later($delay, $view, array $data, $callback, $queue = null)
     {
         $message = Message::fromView($view, $data);
         $message->delay = $delay;
         $callback($message);
         $this->later[] = $message;
+    }
+
+    public function laterOn($queue, $delay, $view, array $data, $callback)
+    {
+        return $this->later($delay, $view, $data, $callback, $queue);
     }
 
     public function hasMessageFor($email)
