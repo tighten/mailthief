@@ -1,7 +1,7 @@
 <?php
 
-use MailThief\MailThief;
 use Illuminate\Contracts\View\Factory;
+use MailThief\MailThief;
 use MailThief\Testing\InteractsWithMail;
 
 class InteractsWithMailTest extends PHPUnit_Framework_TestCase
@@ -19,6 +19,7 @@ class InteractsWithMailTest extends PHPUnit_Framework_TestCase
                 }
             };
         });
+
         return $factory;
     }
 
@@ -82,5 +83,22 @@ class InteractsWithMailTest extends PHPUnit_Framework_TestCase
         });
 
         $this->seeMessageFrom('me@example.com');
+    }
+
+    public function test_see_headers_for()
+    {
+        $mailer = $this->mailer = $this->getMailThief();
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('john@example.com');
+            $m->getSwiftMessage()->getHeaders()->addTextHeader(
+                'X-MailThief-Variables',
+                json_encode(['mailthief_id' => 1])
+            );
+            $m->getHeaders()->addTextHeader('X-MailThief-Variables', json_encode(['mailthief_id' => 2]));
+        });
+
+        $this->seeHeaders('X-MailThief-Variables');
+        $this->seeHeaders('X-MailThief-Variables', json_encode(['mailthief_id' => 1]));
     }
 }
