@@ -229,6 +229,19 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($mailer->hasMessageFor('john@example.com'));
     }
 
+<<<<<<< HEAD
+    public function test_global_from_is_respected_when_email_is_queued()
+    {
+        $mailer = $this->getMailThief();
+        
+        $mailer->alwaysFrom('john@example.com');
+
+        $mailer->queue('example-view', [], function ($m) {
+            $m->to('joe@example.com');
+        });
+
+        $this->assertEquals(['john@example.com'], $mailer->lastMessage()->from->all());
+=======
     public function test_queue_on_is_sent_immediately()
     {
         $mailer = $this->getMailThief();
@@ -243,19 +256,7 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($mailer->hasMessageFor('john@example.com'));
         $this->assertTrue($mailer->hasMessageFor('john@example2.com'));
-    }
-
-    public function test_global_from_is_respected_when_email_is_queued()
-    {
-        $mailer = $this->getMailThief();
-        
-        $mailer->alwaysFrom('john@example.com');
-
-        $mailer->queue('example-view', [], function ($m) {
-            $m->to('joe@example.com');
-        });
-
-        $this->assertEquals(['john@example.com'], $mailer->lastMessage()->from->all());
+>>>>>>> master
     }
 
     public function test_later_messages_are_marked_with_delay()
