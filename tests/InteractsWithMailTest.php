@@ -1,7 +1,7 @@
 <?php
 
-use MailThief\MailThief;
 use Illuminate\Contracts\View\Factory;
+use MailThief\MailThief;
 use MailThief\Testing\InteractsWithMail;
 
 class InteractsWithMailTest extends PHPUnit_Framework_TestCase
