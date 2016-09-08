@@ -91,14 +91,10 @@ class InteractsWithMailTest extends PHPUnit_Framework_TestCase
 
         $mailer->send('example-view', [], function ($m) {
             $m->to('john@example.com');
-            $m->getSwiftMessage()->getHeaders()->addTextHeader(
-                'X-MailThief-Variables',
-                json_encode(['mailthief_id' => 1])
-            );
             $m->getHeaders()->addTextHeader('X-MailThief-Variables', json_encode(['mailthief_id' => 2]));
         });
 
         $this->seeHeaders('X-MailThief-Variables');
-        $this->seeHeaders('X-MailThief-Variables', json_encode(['mailthief_id' => 1]));
+        $this->seeHeaders('X-MailThief-Variables', json_encode(['mailthief_id' => 2]));
     }
 }

@@ -28,7 +28,6 @@ class Message
     public $valid_methods = [
         'addPart',
         'getHeaders',
-        'getSwiftMessage',
         'setReadReceiptTo',
         'setCharset',
         'setMaxLineLength',
@@ -180,5 +179,10 @@ class Message
     {
         $this->headers[] = ['name' => $name, 'value' => $value];
         return $this;
+    }
+
+    public function getSwiftMessage()
+    {
+        throw new Exception("Cannot get Swift message from MailThief message.");
     }
 }
