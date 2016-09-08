@@ -65,10 +65,10 @@ class RegistrationTest extends TestCase
         // Make sure the email was sent from the correct address
         $this->seeMessageFrom('noreply@example.com');
 
-        // Make sure the email contains the existence of a header
+        // Make sure a given header is set on an email
         $this->seeHeaders('X-MailThief-Variables');
 
-        // Make sure the email contains the correct header
+        // Make sure the header is set to a given value
         $this->seeHeaders('X-MailThief-Variables', 'mailthief');
 
         // Make sure the email contains text in the body of the message
