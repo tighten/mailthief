@@ -1,19 +1,10 @@
 <?php
 
-use Illuminate\Container\Container;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Foundation\Application;
 use MailThief\MailThief;
 
 class MailThiefTest extends PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-
-        $app = new Application;
-    }
-
     private function getViewFactory()
     {
         $factory = Mockery::mock(Factory::class);
