@@ -26,6 +26,7 @@ Route::post('register', function () {
         $m->subject('Welcome to my app!');
         $m->from('noreply@example.com');
         $m->bcc('notifications@example.com');
+        $m->getHeaders()->addTextHeader('X-MailThief-Variables', 'mailthief');
     });
 
     // <snip> Return response </snip>
@@ -62,8 +63,13 @@ class RegistrationTest extends TestCase
         $this->seeMessageWithSubject('Welcome to my app!');
 
         // Make sure the email was sent from the correct address
-        // (`from` can be a list, so we return it as a collection)
         $this->seeMessageFrom('noreply@example.com');
+
+        // Make sure a given header is set on an email
+        $this->seeHeaders('X-MailThief-Variables');
+
+        // Make sure the header is set to a given value
+        $this->seeHeaders('X-MailThief-Variables', 'mailthief');
 
         // Make sure the email contains text in the body of the message
         // Default is to search the html rendered view

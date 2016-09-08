@@ -80,6 +80,19 @@ trait InteractsWithMail
         return $this->getMailer()->lastMessage();
     }
 
+    public function seeHeaders($name, $value = null)
+    {
+        $this->assertTrue($this->lastMessage()->headers->contains(function ($header) use ($name, $value) {
+            if (is_null($value)) {
+                return $header['name'] === $name;
+            }
+
+            return $header['name'] === $name && $header['value'] === $value;
+        }));
+
+        return $this;
+    }
+
     protected function seeMessage()
     {
         $this->assertNotNull(

@@ -19,6 +19,7 @@ class Message
     public $reply_to;
     public $priority;
     public $attachments;
+    public $headers;
     public $delay = 0;
     /**
      * Methods that are available in Laravel but not provided by MailThief
@@ -26,6 +27,7 @@ class Message
      */
     public $valid_methods = [
         'addPart',
+        'getHeaders',
         'setReadReceiptTo',
         'setCharset',
         'setMaxLineLength',
@@ -41,6 +43,7 @@ class Message
         $this->bcc = collect();
         $this->reply_to = collect();
         $this->attachments = collect();
+        $this->headers = collect();
     }
 
     public function __call($name, $arguments)
@@ -169,6 +172,12 @@ class Message
     public function attachData($data, $name, array $options = [])
     {
         $this->attachments[] = ['data' => $data, 'name' => $name, 'options' => $options];
+        return $this;
+    }
+
+    public function addTextHeader($name, $value = null)
+    {
+        $this->headers[] = ['name' => $name, 'value' => $value];
         return $this;
     }
 
