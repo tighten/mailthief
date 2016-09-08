@@ -23,4 +23,27 @@ class MailThiefCollection extends Collection
 
         return in_array($key, $this->items);
     }
+
+    /**
+     * 5.3 implementation of Arr::first()
+     */
+    public function first(callable $callback = null, $default = null)
+    {
+        $array = $this->items;
+
+        if (is_null($callback)) {
+            if (empty($array)) {
+                return value($default);
+            }
+            foreach ($array as $item) {
+                return $item;
+            }
+        }
+        foreach ($array as $key => $value) {
+            if (call_user_func($callback, $value, $key)) {
+                return $value;
+            }
+        }
+        return value($default);
+    }
 }
