@@ -32,10 +32,8 @@ class MailThief implements Mailer, MailQueue
         Mail::swap($this);
         app()->instance(Mailer::class, $this);
 
-        $from = app()['config']['mail.from'];
-
-        if (is_array($from) && isset($from['address'])) {
-            $this->alwaysFrom($from['address'], $from['name']);
+        if (config('mail.from.address')) {
+            $this->alwaysFrom(config('mail.from.address'), config('mail.from.name'));
         }
     }
 
