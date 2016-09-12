@@ -40,7 +40,7 @@ class MailThief implements Mailer, MailQueue
     public function raw($text, $callback)
     {
         $message = Message::fromRaw($text);
-        $message = $this->prepareMessage($message, $callback);
+        $this->prepareMessage($message, $callback);
         $this->messages[] = $message;
     }
 
@@ -48,7 +48,7 @@ class MailThief implements Mailer, MailQueue
     {
         $callback = $callback ?: null;
         $message = Message::fromView($this->renderViews($view, $data), $data);
-        $message = $this->prepareMessage($message, $callback);
+        $this->prepareMessage($message, $callback);
         $this->messages[] = $message;
     }
 
@@ -115,7 +115,7 @@ class MailThief implements Mailer, MailQueue
     {
         $message = Message::fromView($view, $data);
         $message->delay = $delay;
-        $message = $this->prepareMessage($message, $callback);
+        $this->prepareMessage($message, $callback);
         $this->later[] = $message;
     }
 
