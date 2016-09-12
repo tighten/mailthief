@@ -2,13 +2,15 @@
 
 namespace MailThief;
 
-use InvalidArgumentException;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\Mail\MailQueue;
+use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
+use InvalidArgumentException;
+use MailThief\Support\MailThiefCollection;
 
 class MailThief implements Mailer, MailQueue
 {
@@ -20,8 +22,8 @@ class MailThief implements Mailer, MailQueue
     {
         $this->views = $views;
         $this->config = $config;
-        $this->messages = collect();
-        $this->later = collect();
+        $this->messages = new MailThiefCollection;
+        $this->later = new MailThiefCollection;
     }
 
     public static function instance()

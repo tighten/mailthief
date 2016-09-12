@@ -63,4 +63,17 @@ class InteractsWithMailTest extends TestCase
 
         $this->seeMessageFrom('me@example.com');
     }
+
+    public function test_see_headers_for()
+    {
+        $mailer = $this->mailer = $this->getMailThief();
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('john@example.com');
+            $m->getHeaders()->addTextHeader('X-MailThief-Variables', json_encode(['mailthief_id' => 2]));
+        });
+
+        $this->seeHeaders('X-MailThief-Variables');
+        $this->seeHeaders('X-MailThief-Variables', json_encode(['mailthief_id' => 2]));
+    }
 }

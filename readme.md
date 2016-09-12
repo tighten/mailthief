@@ -4,7 +4,7 @@
 
 # MailThief
 
-MailThief is a fake mailer for Laravel applications that makes it easy to test mail without actually sending any emails.
+MailThief is a fake mailer for Laravel applications (5.0+) that makes it easy to test mail without actually sending any emails.
 
 ## Quickstart
 
@@ -26,6 +26,7 @@ Route::post('register', function () {
         $m->subject('Welcome to my app!');
         $m->from('noreply@example.com');
         $m->bcc('notifications@example.com');
+        $m->getHeaders()->addTextHeader('X-MailThief-Variables', 'mailthief');
     });
 
     // <snip> Return response </snip>
@@ -62,8 +63,13 @@ class RegistrationTest extends TestCase
         $this->seeMessageWithSubject('Welcome to my app!');
 
         // Make sure the email was sent from the correct address
-        // (`from` can be a list, so we return it as a collection)
         $this->seeMessageFrom('noreply@example.com');
+
+        // Make sure a given header is set on an email
+        $this->seeHeaders('X-MailThief-Variables');
+
+        // Make sure the header is set to a given value
+        $this->seeHeaders('X-MailThief-Variables', 'mailthief');
 
         // Make sure the email contains text in the body of the message
         // Default is to search the html rendered view
@@ -75,3 +81,7 @@ class RegistrationTest extends TestCase
 ```
 
 MailThief supports just about everything you can do with the regular Laravel `Mailer` and `Message` classes. More detailed documentation is coming soon, but in the mean time, explore the [MailThief](https://github.com/tightenco/mailthief/blob/master/src/MailThief.php) and [Message](https://github.com/tightenco/mailthief/blob/master/src/Message.php) classes to get an idea of what's available.
+
+If you’re using the new Mailables syntax in Laravel 5.3, you can use the [native mail assertions](https://github.com/laravel/framework/commit/5deab59e89b85e09b2bd1642e4efe55e933805ca). But if you’re using the classic mail syntax in any version of Laravel, MailThief is still your best option.
+
+
