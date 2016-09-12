@@ -150,7 +150,7 @@ class MailThief implements Mailer, MailQueue
         $this->from = ['address' => $address, 'name' => $name];
     }
 
-    public function loadGlobalFrom()
+    protected function loadGlobalFrom()
     {
         if (config('mail.from.address')) {
             $this->alwaysFrom(config('mail.from.address'), config('mail.from.name'));
