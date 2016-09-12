@@ -32,9 +32,7 @@ class MailThief implements Mailer, MailQueue
         Mail::swap($this);
         app()->instance(Mailer::class, $this);
 
-        if (config('mail.from.address')) {
-            $this->alwaysFrom(config('mail.from.address'), config('mail.from.name'));
-        }
+        $this->loadGlobalFrom();
     }
 
     public function raw($text, $callback)
@@ -150,5 +148,12 @@ class MailThief implements Mailer, MailQueue
     public function alwaysFrom($address, $name = null)
     {
         $this->from = ['address' => $address, 'name' => $name];
+    }
+
+    public function loadGlobalFrom()
+    {
+        if (config('mail.from.address')) {
+            $this->alwaysFrom(config('mail.from.address'), config('mail.from.name'));
+        }
     }
 }

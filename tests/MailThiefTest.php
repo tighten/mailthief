@@ -410,4 +410,20 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
             $m->foo('bar');
         });
     }
+
+    public function test_it_reads_values_from_the_config_helper_function()
+    {
+        // Include the Mocked config() function
+        include_once('helpers.php');
+
+        $mailer = $this->getMailThief();
+
+        $mailer->loadGlobalFrom();
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('joe@example.com');
+        });
+
+        $this->assertEquals(['foo@bar.tld' => 'First Last'], $mailer->lastMessage()->from->all());
+    }
 }
