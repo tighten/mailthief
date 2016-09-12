@@ -1,29 +1,7 @@
 <?php
 
-use MailThief\MailThief;
-use Illuminate\Contracts\View\Factory;
-
-class MailThiefTest extends PHPUnit_Framework_TestCase
+class MailThiefTest extends TestCase
 {
-    private function getViewFactory()
-    {
-        $factory = Mockery::mock(Factory::class);
-        $factory->shouldReceive('make')->andReturnUsing(function ($template, $data) {
-            return new class {
-                public function render()
-                {
-                    return 'stubbed rendered view';
-                }
-            };
-        });
-        return $factory;
-    }
-
-    private function getMailThief()
-    {
-        return new MailThief($this->getViewFactory());
-    }
-
     public function test_send_to_one_recipient()
     {
         $mailer = $this->getMailThief();
@@ -413,12 +391,11 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
 
     public function test_it_reads_values_from_the_config_helper_function()
     {
-        // Include the Mocked config() function
-        include_once('helpers.php');
+        $mailer = \Mockery::mock('MailThief\MailThief[swapMail]', [$this->getViewFactory(), $this->getConfigFactory()])
+                    ->shouldAllowMockingProtectedMethods();
+        $mailer->shouldReceive('swapMail')->once()->andReturn(null);
 
-        $mailer = $this->getMailThief();
-
-        $mailer->loadGlobalFrom();
+        $mailer->hijack();
 
         $mailer->send('example-view', [], function ($m) {
             $m->to('joe@example.com');

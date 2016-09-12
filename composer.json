@@ -20,5 +20,10 @@
         "psr-4": {
             "MailThief\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/TestCase.php"
+        ]
     }
 }
