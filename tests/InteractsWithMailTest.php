@@ -1,32 +1,11 @@
 <?php
 
-use Illuminate\Contracts\View\Factory;
 use MailThief\MailThief;
 use MailThief\Testing\InteractsWithMail;
 
-class InteractsWithMailTest extends PHPUnit_Framework_TestCase
+class InteractsWithMailTest extends TestCase
 {
     use InteractsWithMail;
-
-    private function getViewFactory()
-    {
-        $factory = Mockery::mock(Factory::class);
-        $factory->shouldReceive('make')->andReturnUsing(function ($template, $data) {
-            return new class {
-                public function render()
-                {
-                    return 'stubbed rendered view';
-                }
-            };
-        });
-
-        return $factory;
-    }
-
-    private function getMailThief()
-    {
-        return new MailThief($this->getViewFactory());
-    }
 
     private function getMockMailThief()
     {

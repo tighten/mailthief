@@ -1,29 +1,7 @@
 <?php
 
-use Illuminate\Contracts\View\Factory;
-use MailThief\MailThief;
-
-class MailThiefTest extends PHPUnit_Framework_TestCase
+class MailThiefTest extends TestCase
 {
-    private function getViewFactory()
-    {
-        $factory = Mockery::mock(Factory::class);
-        $factory->shouldReceive('make')->andReturnUsing(function ($template, $data) {
-            return new class {
-                public function render()
-                {
-                    return 'stubbed rendered view';
-                }
-            };
-        });
-        return $factory;
-    }
-
-    private function getMailThief()
-    {
-        return new MailThief($this->getViewFactory());
-    }
-
     public function test_send_to_one_recipient()
     {
         $mailer = $this->getMailThief();
@@ -115,6 +93,33 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
         $mailer->send('example-view', [], function ($m) {
             $m->to('john@example.com');
             $m->from(['joe@example.com']);
+            $m->from(['jane@example.com']);
+        });
+
+        $this->assertEquals(['jane@example.com'], $mailer->lastMessage()->from->all());
+    }
+
+    public function test_global_from_is_respected()
+    {
+        $mailer = $this->getMailThief();
+        
+        $mailer->alwaysFrom('john@example.com');
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('joe@example.com');
+        });
+
+        $this->assertEquals(['john@example.com'], $mailer->lastMessage()->from->all());
+    }
+
+    public function test_global_from_gets_overwritten_if_specified()
+    {
+        $mailer = $this->getMailThief();
+        
+        $mailer->alwaysFrom('john@example.com');
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('joe@example.com');
             $m->from(['jane@example.com']);
         });
 
@@ -218,6 +223,19 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($mailer->hasMessageFor('john@example2.com'));
     }
 
+    public function test_global_from_is_respected_when_email_is_queued()
+    {
+        $mailer = $this->getMailThief();
+        
+        $mailer->alwaysFrom('john@example.com');
+
+        $mailer->queue('example-view', [], function ($m) {
+            $m->to('joe@example.com');
+        });
+
+        $this->assertEquals(['john@example.com'], $mailer->lastMessage()->from->all());
+    }
+
     public function test_later_messages_are_marked_with_delay()
     {
         $mailer = $this->getMailThief();
@@ -249,6 +267,19 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
         });
 
         $this->assertFalse($mailer->hasMessageFor('john@example.com'));
+    }
+
+    public function test_global_from_is_respected_when_email_set_to_later_with_a_delay()
+    {
+        $mailer = $this->getMailThief();
+        
+        $mailer->alwaysFrom('john@example.com');
+
+        $mailer->later(10, 'example-view', [], function ($m) {
+            $m->to('joe@example.com');
+        });
+
+        $this->assertEquals(['john@example.com'], $mailer->later->first()->from->all());
     }
 
     public function test_can_retrieve_last_sent_message()
@@ -356,5 +387,20 @@ class MailThiefTest extends PHPUnit_Framework_TestCase
             $m->subject('Second message');
             $m->foo('bar');
         });
+    }
+
+    public function test_it_reads_values_from_the_config_helper_function()
+    {
+        $mailer = \Mockery::mock('MailThief\MailThief[swapMail]', [$this->getViewFactory(), $this->getConfigFactory()])
+                    ->shouldAllowMockingProtectedMethods();
+        $mailer->shouldReceive('swapMail')->once()->andReturn(null);
+
+        $mailer->hijack();
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('joe@example.com');
+        });
+
+        $this->assertEquals(['foo@bar.tld' => 'First Last'], $mailer->lastMessage()->from->all());
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use InvalidArgumentException;
 use MailThief\Support\MailThiefCollection;
 
@@ -17,9 +18,10 @@ class MailThief implements Mailer, MailQueue
     public $messages;
     public $later;
 
-    public function __construct(Factory $views)
+    public function __construct(Factory $views, ConfigRepository $config)
     {
         $this->views = $views;
+        $this->config = $config;
         $this->messages = new MailThiefCollection;
         $this->later = new MailThiefCollection;
     }
@@ -31,14 +33,27 @@ class MailThief implements Mailer, MailQueue
 
     public function hijack()
     {
+        $this->swapMail();
+        $this->loadGlobalFrom();
+    }
+
+    protected function swapMail()
+    {
         Mail::swap($this);
         app()->instance(Mailer::class, $this);
+    }
+
+    protected function loadGlobalFrom()
+    {
+        if ($this->config->has('mail.from.address')) {
+            $this->alwaysFrom($this->config->get('mail.from.address'), $this->config->get('mail.from.name'));
+        }
     }
 
     public function raw($text, $callback)
     {
         $message = Message::fromRaw($text);
-        $callback($message);
+        $this->prepareMessage($message, $callback);
         $this->messages[] = $message;
     }
 
@@ -46,7 +61,7 @@ class MailThief implements Mailer, MailQueue
     {
         $callback = $callback ?: null;
         $message = Message::fromView($this->renderViews($view, $data), $data);
-        $callback($message);
+        $this->prepareMessage($message, $callback);
         $this->messages[] = $message;
     }
 
@@ -113,7 +128,7 @@ class MailThief implements Mailer, MailQueue
     {
         $message = Message::fromView($view, $data);
         $message->delay = $delay;
-        $callback($message);
+        $this->prepareMessage($message, $callback);
         $this->later[] = $message;
     }
 
@@ -132,5 +147,21 @@ class MailThief implements Mailer, MailQueue
     public function lastMessage()
     {
         return $this->messages->last();
+    }
+
+    public function prepareMessage($message, $callback)
+    {
+        if (! empty($this->from['address'])) {
+            $message->from($this->from['address'], $this->from['name']);
+        }
+
+        $callback($message);
+
+        return $message;
+    }
+
+    public function alwaysFrom($address, $name = null)
+    {
+        $this->from = ['address' => $address, 'name' => $name];
     }
 }
