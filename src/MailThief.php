@@ -164,4 +164,9 @@ class MailThief implements Mailer, MailQueue
     {
         $this->from = ['address' => $address, 'name' => $name];
     }
+
+    public function subjects()
+    {
+        return $this->messages->pluck('subject');
+    }
 }

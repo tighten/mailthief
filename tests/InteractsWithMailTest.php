@@ -52,6 +52,32 @@ class InteractsWithMailTest extends TestCase
         $this->seeMessageWithSubject('foo');
     }
 
+    public function test_see_in_subjects()
+    {
+        $mailer = $this->mailer = $this->getMailThief();
+
+        collect(['foo@bar.tld', 'baz@qux.tld'])->each(function ($email) use ($mailer) {
+            $mailer->send('example-view', [], function ($m) use ($email) {
+                $m->subject("Message for {$email}");
+            });
+        });
+
+        $this->seeInSubjects("Message for baz@qux.tld");
+    }
+
+    public function test_see_in_subjects_with_array()
+    {
+        $mailer = $this->mailer = $this->getMailThief();
+
+        collect(['Taylor Otwell', 'Adam Wathan'])->each(function ($name) use ($mailer) {
+            $mailer->send('example-view', [], function ($m) use ($name) {
+                $m->subject("Message for {$name}");
+            });
+        });
+
+        $this->seeInSubjects(["Message for Taylor Otwell", "Message for Adam Wathan"]);
+    }
+
     public function test_see_message_from()
     {
         $mailer = $this->mailer = $this->getMailThief();
