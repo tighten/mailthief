@@ -93,6 +93,15 @@ trait InteractsWithMail
         return $this;
     }
 
+    protected function seeInSubjects($subjects)
+    {
+        $subjects = (array) $subjects;
+
+        foreach ($subjects as $subject) {
+            $this->assertTrue(in_array($subject, $this->mailer->subjects()->all()));
+        }
+    }
+
     protected function seeMessage()
     {
         $this->assertNotNull(

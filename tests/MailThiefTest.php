@@ -102,7 +102,7 @@ class MailThiefTest extends TestCase
     public function test_global_from_is_respected()
     {
         $mailer = $this->getMailThief();
-        
+
         $mailer->alwaysFrom('john@example.com');
 
         $mailer->send('example-view', [], function ($m) {
@@ -115,7 +115,7 @@ class MailThiefTest extends TestCase
     public function test_global_from_gets_overwritten_if_specified()
     {
         $mailer = $this->getMailThief();
-        
+
         $mailer->alwaysFrom('john@example.com');
 
         $mailer->send('example-view', [], function ($m) {
@@ -226,7 +226,7 @@ class MailThiefTest extends TestCase
     public function test_global_from_is_respected_when_email_is_queued()
     {
         $mailer = $this->getMailThief();
-        
+
         $mailer->alwaysFrom('john@example.com');
 
         $mailer->queue('example-view', [], function ($m) {
@@ -272,7 +272,7 @@ class MailThiefTest extends TestCase
     public function test_global_from_is_respected_when_email_set_to_later_with_a_delay()
     {
         $mailer = $this->getMailThief();
-        
+
         $mailer->alwaysFrom('john@example.com');
 
         $mailer->later(10, 'example-view', [], function ($m) {
@@ -402,5 +402,20 @@ class MailThiefTest extends TestCase
         });
 
         $this->assertEquals(['foo@bar.tld' => 'First Last'], $mailer->lastMessage()->from->all());
+    }
+
+    public function test_it_gets_subjects()
+    {
+        $mailer = $this->getMailThief();
+
+        collect(['foo@bar.tld', 'baz@qux.tld'])->each(function ($email) use ($mailer) {
+            $mailer->send('example-view', [], function ($m) use ($email) {
+                $m->subject("Message for {$email}");
+            });
+        });
+
+        $messages = ["Message for foo@bar.tld", "Message for baz@qux.tld"];
+
+        $this->assertEquals($messages, $mailer->subjects()->all());
     }
 }
