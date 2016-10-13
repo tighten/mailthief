@@ -3,6 +3,8 @@
 namespace MailThief\Testing;
 
 use MailThief\Facades\MailThief;
+use MailThief\Message;
+use MailThief\Support\MailThiefCollection;
 use Illuminate\Contracts\Mail\Mailer;
 
 trait InteractsWithMail
@@ -17,6 +19,40 @@ trait InteractsWithMail
     private function getMailer()
     {
         return $this->mailer ?: MailThief::getFacadeRoot();
+    }
+    
+    /**
+     * @return MailThiefCollection
+     */
+    private function getMessages()
+    {
+        return $this->getMailer()->messages
+    }
+
+    /**
+     * @param array $emails
+     * @return MailThiefCollection
+     */
+    private function getMessagesFor(array $emails)
+    {
+        return $this->getMessages()->filter(function (Message $message) use ($emails) {
+            foreach ($emails as $email) {
+                if ($message->hasRecipient($email)) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+    }
+
+    /**
+     * @param string $email
+     * @return Message
+     */
+    private function getLastMessageFor(string $email)
+    {
+        return $this->getMessagesFor([$email])->last();
     }
 
     /** @before */
