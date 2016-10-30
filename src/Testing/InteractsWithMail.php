@@ -47,12 +47,12 @@ trait InteractsWithMail
     }
 
     /**
-     * @param string $email
+     * @param array|string $email
      * @return Message
      */
-    public function getLastMessageFor(string $email)
+    public function getLastMessageFor($email)
     {
-        return $this->getMessagesFor([$email])->last();
+        return $this->getMessagesFor((array) $email)->last();
     }
 
     /** @before */
