@@ -56,21 +56,38 @@ trait InteractsWithMail
         return $this;
     }
 
-    public function seeMessageFrom($email)
+    public function seeMessageFrom($email, $name = NULL)
     {
         $this->seeMessage();
 
-        $from = $this->lastMessage()->from->first();
+        $this->lastMessage()->from->each(function ($nameOrEmail, $emailOrIndex) use ($email, $name) {
+            $fromEmail = is_int($emailOrIndex) ? $nameOrEmail : $emailOrIndex;
+            $fromName = is_int($emailOrIndex) ? null : $nameOrEmail;
 
-        $this->assertEquals(
-            $email,
-            $from,
-            sprintf(
-                'Expected to find message from "[%s]", but found "[%s]".',
+            $this->assertEquals(
                 $email,
-                $from
-            )
-        );
+                $fromEmail,
+                sprintf(
+                    'Expected to find message from "[%s]", but found "[%s]".',
+                    $email,
+                    $fromEmail
+                )
+            );
+
+            if (! $name) {
+                return;
+            }
+
+            $this->assertEquals(
+                $name,
+                $fromName,
+                sprintf(
+                    'Expected to find message from "[%s]", but found "[%s]".',
+                    $name,
+                    $fromName
+                )
+            );
+        });
 
         return $this;
     }

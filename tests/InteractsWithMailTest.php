@@ -81,12 +81,13 @@ class InteractsWithMailTest extends TestCase
     {
         $mailer = $this->mailer = $this->getMailThief();
 
-        $mailer->alwaysFrom(['me@example.com' => 'Example Person']);
+        $mailer->alwaysFrom('me@example.com', 'Example Person');
 
         $mailer->send('example-view', [], function ($m) {
             $m->to('john@example.com');
         });
 
         $this->seeMessageFrom('me@example.com');
+        $this->seeMessageFrom('me@example.com', 'Example Person');
     }
 }
