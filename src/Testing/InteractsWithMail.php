@@ -61,6 +61,8 @@ trait InteractsWithMail
         $this->seeMessage();
 
         $this->lastMessage()->from->each(function ($nameOrEmail, $emailOrIndex) use ($email, $name) {
+            // If no name is specified, the structure is ['hello@example.org'], if specified, it's
+            // ['hello@example.org' => 'From Example']
             $fromEmail = is_int($emailOrIndex) ? $nameOrEmail : $emailOrIndex;
             $fromName = is_int($emailOrIndex) ? null : $nameOrEmail;
 
