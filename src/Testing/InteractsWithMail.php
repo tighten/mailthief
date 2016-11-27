@@ -36,13 +36,9 @@ trait InteractsWithMail
     public function getMessagesFor(array $emails)
     {
         return $this->getMessages()->filter(function (Message $message) use ($emails) {
-            foreach ($emails as $email) {
-                if ($message->hasRecipient($email)) {
-                    return true;
-                }
-            }
-
-            return false;
+            return collect($emails)->contains(function ($email) use ($message) {
+                return $message->hasRecipient($email);
+            });
         });
     }
 
