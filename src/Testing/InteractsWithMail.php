@@ -30,11 +30,13 @@ trait InteractsWithMail
     }
 
     /**
-     * @param array $emails
+     * @param array|string $emails
      * @return MailThiefCollection
      */
     public function getMessagesFor(array $emails)
     {
+        $emails = (array) $emails;
+
         return $this->getMessages()->filter(function (Message $message) use ($emails) {
             return collect($emails)->contains(function ($email) use ($message) {
                 return $message->hasRecipient($email);
@@ -48,7 +50,7 @@ trait InteractsWithMail
      */
     public function getLastMessageFor($email)
     {
-        return $this->getMessagesFor((array) $email)->last();
+        return $this->getMessagesFor($email)->last();
     }
 
     /** @before */
