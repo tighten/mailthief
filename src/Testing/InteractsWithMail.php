@@ -20,13 +20,13 @@ trait InteractsWithMail
     {
         return $this->mailer ?: MailThief::getFacadeRoot();
     }
-    
+
     /**
      * @return MailThiefCollection
      */
     public function getMessages()
     {
-        return $this->getMailer()->messages
+        return $this->getMailer()->messages;
     }
 
     /**
