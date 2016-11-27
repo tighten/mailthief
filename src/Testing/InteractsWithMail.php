@@ -33,7 +33,7 @@ trait InteractsWithMail
      * @param array|string $emails
      * @return MailThiefCollection
      */
-    public function getMessagesFor(array $emails)
+    public function getMessagesFor($emails)
     {
         $emails = (array) $emails;
 
