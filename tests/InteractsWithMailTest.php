@@ -20,6 +20,66 @@ class InteractsWithMailTest extends TestCase
         return;
     }
 
+    public function test_get_messages()
+    {
+        $mailer = $this->mailer = $this->getMailThief();
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('john@example.com');
+        });
+
+        $message = $this->getMessages()->first();
+
+        static::assertEquals(['john@example.com'], $message->to->toArray());
+    }
+
+    public function test_get_messages_for()
+    {
+        $mailer = $this->mailer = $this->getMailThief();
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('john@example.com');
+        });
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to(['john@example.com', 'jay@example.com']);
+        });
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('jay@example.com');
+        });
+
+        $messages = $this->getMessagesFor(['john@example.com']);
+
+        static::assertEquals(2, $messages->count());
+
+        foreach ($messages as $message) {
+            static::assertTrue($message->to->contains('john@example.com'));
+        }
+    }
+
+    public function test_get_last_message_for()
+    {
+        $mailer = $this->mailer = $this->getMailThief();
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('john@example.com');
+        });
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to(['john@example.com', 'jay@example.com']);
+        });
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('jay@example.com');
+        });
+
+        $message = $this->getLastMessageFor(['john@example.com']);
+
+        static::assertTrue($message->to->contains('john@example.com'));
+        static::assertTrue($message->to->contains('jay@example.com'));
+    }
+
     public function test_hijack_mail()
     {
         $mailer = $this->mailer = $this->getMockMailThief();
