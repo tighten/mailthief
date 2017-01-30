@@ -9,7 +9,7 @@ class MailThiefCollection extends Collection
     /**
      * Identical to the 5.3 implementation of contains
      */
-    public function contains($key, $value = null)
+    public function contains($key, $operator = null, $value = null)
     {
         if (func_num_args() == 2) {
             return $this->contains(function ($item) use ($key, $value) {
