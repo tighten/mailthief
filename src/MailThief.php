@@ -67,12 +67,14 @@ class MailThief implements Mailer, MailQueue
 
     private function renderViews($view, $data)
     {
-        return collect($this->parseView($view))->map(function ($template, $part) use ($data) {
+        return collect($this->parseView($view))->map(function ($view, $part) use ($data) {
             if ($part == 'raw') {
-                return $template;
+                return $view;
             }
 
-            return $this->views->make($template, $data)->render();
+            return $view instanceof HtmlString
+                            ? $view->toHtml()
+                            : $this->views->make($view, $data)->render();
         })->all();
     }
 
