@@ -8,6 +8,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\HtmlString;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use InvalidArgumentException;
 use MailThief\Support\MailThiefCollection;
