@@ -74,8 +74,8 @@ class MailThief implements Mailer, MailQueue
             }
 
             return $template instanceof HtmlString
-                            ? $template->toHtml()
-                            : $this->views->make($template, $data)->render();
+                ? $template->toHtml()
+                : $this->views->make($template, $data)->render();
         })->all();
     }
 
