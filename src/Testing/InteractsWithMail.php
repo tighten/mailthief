@@ -94,7 +94,9 @@ trait InteractsWithMail
     {
         $this->seeMessage();
 
-        $from = $this->lastMessage()->from->first();
+        $from = $this->lastMessage()->from->map(function ($value, $key) {
+            return is_numeric($key) ? $value : $key;
+        })->first();
 
         $this->assertEquals(
             $email,

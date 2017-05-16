@@ -148,6 +148,13 @@ class InteractsWithMailTest extends TestCase
         });
 
         $this->seeMessageFrom('me@example.com');
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->from('me2@example.com', 'Name');
+            $m->to('john@example.com');
+        });
+
+        $this->seeMessageFrom('me2@example.com');
     }
 
     public function test_see_headers_for()
