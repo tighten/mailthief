@@ -147,4 +147,9 @@ trait InteractsWithMail
 
         return $this;
     }
+
+    protected function dontSeeMessage()
+    {
+        return $this->assertTrue($this->getMessages()->isEmpty());
+    }
 }
