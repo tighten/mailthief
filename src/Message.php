@@ -185,4 +185,9 @@ class Message
     {
         throw new Exception("Cannot get Swift message from MailThief message.");
     }
+
+    public function addPart($body, $contentType = null, $charset = null)
+    {
+
+    }
 }
