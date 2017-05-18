@@ -150,6 +150,6 @@ trait InteractsWithMail
 
     protected function dontSeeMessage()
     {
-        return $this->assertTrue($this->getMessages()->isEmpty());
+        $this->assertTrue($this->getMessages()->isEmpty());
     }
 }
