@@ -150,6 +150,11 @@ trait InteractsWithMail
 
     protected function dontSeeMessage()
     {
-        $this->assertTrue($this->getMessages()->isEmpty());
+        $this->assertNull(
+            $this->lastMessage(),
+            'Generated email found.'
+        );
+
+        return $this;
     }
 }
