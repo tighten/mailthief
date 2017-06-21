@@ -26,5 +26,15 @@
         "classmap": [
             "tests/TestCase.php"
         ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MailThief\\MailThiefServiceProvider"
+            ],
+            "aliases": {
+                "MailThief": "MailThief\\Facades\\MailThief"
+            }
+        }
     }
 }
