@@ -147,4 +147,14 @@ trait InteractsWithMail
 
         return $this;
     }
+
+    protected function dontSeeMessage()
+    {
+        $this->assertNull(
+            $this->lastMessage(),
+            'Generated email found.'
+        );
+
+        return $this;
+    }
 }
