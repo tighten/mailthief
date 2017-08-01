@@ -6,15 +6,10 @@ use Exception;
 
 class NullMessageForView
 {
-    protected $validMethods = [
-        'embed',
-        'embedData',
-    ];
-
     public function __call($method, $params)
     {
-        if (in_array($method, $this->validMethods)) {
-            return $this;
+        if (in_array($method, ['embed', 'embedData'])) {
+            return '';
         }
 
         throw new Exception("MailThief message unable to respond to method call: [${$method}]");
