@@ -61,8 +61,13 @@ class MailThief implements Mailer, MailQueue
     public function send($view, array $data = [], $callback = null)
     {
         $callback = $callback ?: null;
+
+        $data['message'] = new NullMessageForView;
+
         $message = Message::fromView($this->renderViews($view, $data), $data);
+
         $this->prepareMessage($message, $callback);
+
         $this->messages[] = $message;
     }
 
