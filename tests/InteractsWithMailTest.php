@@ -176,4 +176,18 @@ class InteractsWithMailTest extends TestCase
 
         $this->dontSeeMessage();
     }
+
+    public function test_global_from()
+    {
+        $mailer = $this->mailer = $this->getMailThief();
+
+        $mailer->alwaysFrom('me@example.com', 'Example Person');
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('john@example.com');
+        });
+
+        $this->seeMessageFrom('me@example.com');
+        $this->seeMessageFrom('me@example.com', 'Example Person');
+    }
 }
