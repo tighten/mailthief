@@ -76,8 +76,12 @@ class Message
         return $this;
     }
 
-    public function to($address, $name = null)
+    public function to($address, $name = null, $override = false)
     {
+        if ($override) {
+            $this->to = collect();
+        }
+        
         if (! is_array($address)) {
             $address = $name ? [$address => $name] : [$address];
         }
