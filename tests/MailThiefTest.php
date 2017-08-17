@@ -16,6 +16,17 @@ class MailThiefTest extends TestCase
 
         $this->assertTrue($mailer->hasMessageFor('john@example.com'));
     }
+    
+    public function test_overwrite_recipient()
+    {
+        $mailer = $this->getMailThief();
+
+        $mailer->send('example-view', [], function ($m) {
+            $m->to('john@example.com')->to('jane@example.com', null, true);
+        });
+
+        $this->assertTrue($mailer->hasMessageFor('jane@example.com'));
+    }
 
     public function test_send_to_multiple_recipients()
     {
