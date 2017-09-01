@@ -9,12 +9,12 @@
         }
     ],
     "require": {
-        "illuminate/mail": "^5.0",
-        "illuminate/view": "^5.0"
+        "illuminate/mail": ">=5.0 <5.5",
+        "illuminate/view": ">=5.0 <5.5"
     },
     "require-dev": {
         "mockery/mockery": "^0.9.5",
-        "laravel/framework": "^5.1",
+        "laravel/framework": ">=5.0 <5.5",
         "phpunit/phpunit": "^5.5"
     },
     "autoload": {
