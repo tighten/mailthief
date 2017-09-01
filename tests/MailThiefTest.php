@@ -11,7 +11,7 @@ class MailThiefTest extends TestCase
         $mailer = $this->getMailThief();
 
         $mailer->send('example-view', [], function ($m) {
-            $m->to('john@example.com');
+            $m->to('john@example.com')->to('jane@example.com', null);
         });
 
         $this->assertTrue($mailer->hasMessageFor('john@example.com'));
@@ -25,6 +25,7 @@ class MailThiefTest extends TestCase
             $m->to('john@example.com')->to('jane@example.com', null, true);
         });
 
+        $this->assertFalse($mailer->hasMessageFor('john@example.com'));
         $this->assertTrue($mailer->hasMessageFor('jane@example.com'));
     }
 
