@@ -56,7 +56,9 @@ trait InteractsWithMail
     /** @before */
     public function hijackMail()
     {
-        $this->getMailer()->hijack();
+        $this->afterApplicationCreated(function() {
+            $this->getMailer()->hijack();
+        });
     }
 
     public function seeMessageFor($email)
