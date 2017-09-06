@@ -9,8 +9,8 @@
         }
     ],
     "require": {
-        "illuminate/mail": ">=5.0 <5.5",
-        "illuminate/view": ">=5.0 <5.5"
+        "illuminate/mail": "5.*",
+        "illuminate/view": "5.*"
     },
     "require-dev": {
         "mockery/mockery": "^0.9.5",

@@ -1,8 +1,8 @@
 <?php
 
-use MailThief\MailThief;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
+use Illuminate\Contracts\View\Factory;
+use MailThief\MailThiefFiveFourCompatible;
 
 abstract class TestCase extends PHPUnit_Framework_TestCase {
 
@@ -53,7 +53,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase {
 
     protected function getMailThief()
     {
-        return new MailThief($this->getViewFactory(), $this->getConfigFactory());
+        return new MailThiefFiveFourCompatible($this->getViewFactory(), $this->getConfigFactory());
     }
 
 }

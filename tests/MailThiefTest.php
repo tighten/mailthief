@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Contracts\View\Factory;
-use MailThief\MailThief;
+use MailThief\MailThiefFiveFourCompatible;
 use MailThief\NullMessageForView;
 
 class MailThiefTest extends TestCase
@@ -391,7 +391,7 @@ class MailThiefTest extends TestCase
             }))
             ->andReturn($this->getView());
 
-        $mailer = new MailThief($viewFactory, $this->getConfigFactory());;
+        $mailer = new MailThiefFiveFourCompatible($viewFactory, $this->getConfigFactory());;
 
         $mailer->send('example-view', [], function ($m) {
             $m->subject('Second message');
