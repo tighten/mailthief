@@ -3,13 +3,16 @@
 namespace MailThief;
 
 use Illuminate\Contracts\Mail\MailQueue;
+use Illuminate\Contracts\Mail\Mailable as MailableContract;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Mail\Mailable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\HtmlString;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
+use ReflectionMethod;
 use InvalidArgumentException;
 use MailThief\Support\MailThiefCollection;
 
@@ -51,6 +54,16 @@ class MailThief implements Mailer, MailQueue
         }
     }
 
+    public function to($users)
+    {
+        return (new MailThiefPendingMail($this))->to($users);
+    }
+
+    public function bcc($users)
+    {
+        return (new MailThiefPendingMail($this))->bcc($users);
+    }
+
     public function raw($text, $callback)
     {
         $message = Message::fromRaw($text);
@@ -60,6 +73,10 @@ class MailThief implements Mailer, MailQueue
 
     public function send($view, array $data = [], $callback = null)
     {
+        if ($view instanceof MailableContract) {
+            return $this->sendMailable($view);
+        }
+
         $callback = $callback ?: null;
 
         $data['message'] = new NullMessageForView;
@@ -69,6 +86,11 @@ class MailThief implements Mailer, MailQueue
         $this->prepareMessage($message, $callback);
 
         $this->messages[] = $message;
+    }
+
+    protected function sendMailable(Mailable $mailable)
+    {
+        return $mailable->send($this);
     }
 
     private function renderViews($view, $data)
@@ -115,34 +137,68 @@ class MailThief implements Mailer, MailQueue
         return [];
     }
 
-    public function queue($view, array $data, $callback, $queue = null)
+    public function queue($view, $queue = null)
     {
-        // @todo: Down the road it might be important to log the queue that is
-        // meant to be used for people to assert against.
-        return $this->send($view, $data, $callback);
+        if (! $view instanceof MailableContract) {
+            throw new InvalidArgumentException('Only mailables may be queued.');
+        }
+
+        return $this->send($view);
     }
 
-    public function onQueue($queue, $view, array $data, $callback)
+    public function onQueue($queue, $view)
     {
-        return $this->queue($view, $data, $callback, $queue);
+        return $this->queue($view, $queue);
     }
 
-    public function queueOn($queue, $view, array $data, $callback)
+    public function queueOn($queue, $view)
     {
-        return $this->queue($view, $data, $callback, $queue);
+        return $this->queue($view, $queue);
     }
 
-    public function later($delay, $view, array $data, $callback, $queue = null)
+    public function later($delay, $view, $queue = null)
     {
-        $message = Message::fromView($view, $data);
+        if (! $view instanceof MailableContract) {
+            throw new InvalidArgumentException('Only mailables may be queued.');
+        }
+
+        $view->build();
+
+        $data = $view->buildViewData();
+        $data['message'] = new NullMessageForView;
+
+        $buildView = new ReflectionMethod(Mailable::class, 'buildView');
+        $buildView->setAccessible(true);
+
+        $message = Message::fromView($this->renderViews($buildView->invoke($view), $data), $data);
         $message->delay = $delay;
-        $this->prepareMessage($message, $callback);
+        $this->prepareMessage($message, function ($message) use ($view) {
+            $buildFrom = new ReflectionMethod(Mailable::class, 'buildFrom');
+            $buildFrom->setAccessible(true);
+            $buildFrom->invoke($view, $message);
+
+            $buildRecipients = new ReflectionMethod(Mailable::class, 'buildRecipients');
+            $buildRecipients->setAccessible(true);
+            $buildRecipients->invoke($view, $message);
+
+            $buildSubject = new ReflectionMethod(Mailable::class, 'buildSubject');
+            $buildSubject->setAccessible(true);
+            $buildSubject->invoke($view, $message);
+
+            $buildAttachments = new ReflectionMethod(Mailable::class, 'buildAttachments');
+            $buildAttachments->setAccessible(true);
+            $buildAttachments->invoke($view, $message);
+
+            $runCallbacks = new ReflectionMethod(Mailable::class, 'runCallbacks');
+            $runCallbacks->setAccessible(true);
+            $runCallbacks->invoke($view, $message);
+        });
         $this->later[] = $message;
     }
 
-    public function laterOn($queue, $delay, $view, array $data, $callback)
+    public function laterOn($queue, $delay, $view)
     {
-        return $this->later($delay, $view, $data, $callback, $queue);
+        return $this->later($delay, $view, $queue);
     }
 
     public function hasMessageFor($email)

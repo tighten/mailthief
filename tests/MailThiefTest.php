@@ -16,7 +16,7 @@ class MailThiefTest extends TestCase
 
         $this->assertTrue($mailer->hasMessageFor('john@example.com'));
     }
-    
+
     public function test_overwrite_recipient()
     {
         $mailer = $this->getMailThief();
@@ -216,9 +216,7 @@ class MailThiefTest extends TestCase
     {
         $mailer = $this->getMailThief();
 
-        $mailer->queue('example-view', [], function ($m) {
-            $m->to('john@example.com');
-        });
+        $mailer->queue((new MailthiefTestSampleMailable)->to('john@example.com'));
 
         $this->assertTrue($mailer->hasMessageFor('john@example.com'));
     }
@@ -227,13 +225,9 @@ class MailThiefTest extends TestCase
     {
         $mailer = $this->getMailThief();
 
-        $mailer->queueOn('queue-name', 'example-view', [], function ($m) {
-            $m->to('john@example.com');
-        });
+        $mailer->queueOn('queue-name', (new MailthiefTestSampleMailable)->to('john@example.com'));
 
-        $mailer->queueOn('queue-name', 'example-view', [], function ($m) {
-            $m->to('john@example2.com');
-        });
+        $mailer->queueOn('queue-name', (new MailthiefTestSampleMailable)->to('john@example2.com'));
 
         $this->assertTrue($mailer->hasMessageFor('john@example.com'));
         $this->assertTrue($mailer->hasMessageFor('john@example2.com'));
@@ -245,9 +239,7 @@ class MailThiefTest extends TestCase
 
         $mailer->alwaysFrom('john@example.com');
 
-        $mailer->queue('example-view', [], function ($m) {
-            $m->to('joe@example.com');
-        });
+        $mailer->queue((new MailthiefTestSampleMailable)->to('joe@example.com'));
 
         $this->assertEquals(['john@example.com'], $mailer->lastMessage()->from->all());
     }
@@ -256,9 +248,7 @@ class MailThiefTest extends TestCase
     {
         $mailer = $this->getMailThief();
 
-        $mailer->later(10, 'example-view', [], function ($m) {
-            $m->to('john@example.com');
-        });
+        $mailer->later(10, (new MailthiefTestSampleMailable)->to('john@example.com'));
 
         $this->assertEquals(10, $mailer->later->first()->delay);
     }
@@ -267,9 +257,7 @@ class MailThiefTest extends TestCase
     {
         $mailer = $this->getMailThief();
 
-        $mailer->laterOn('queue-name', 10, 'example-view', [], function ($m) {
-            $m->to('john@example.com');
-        });
+        $mailer->laterOn('queue-name', 10, (new MailthiefTestSampleMailable)->to('john@example.com'));
 
         $this->assertEquals(10, $mailer->later->first()->delay);
     }
@@ -278,9 +266,7 @@ class MailThiefTest extends TestCase
     {
         $mailer = $this->getMailThief();
 
-        $mailer->later(10, 'example-view', [], function ($m) {
-            $m->to('john@example.com');
-        });
+        $mailer->later(10, (new MailthiefTestSampleMailable)->to('john@example.com'));
 
         $this->assertFalse($mailer->hasMessageFor('john@example.com'));
     }
@@ -291,9 +277,7 @@ class MailThiefTest extends TestCase
 
         $mailer->alwaysFrom('john@example.com');
 
-        $mailer->later(10, 'example-view', [], function ($m) {
-            $m->to('joe@example.com');
-        });
+        $mailer->to('joe@example.com')->later(10, new MailthiefTestSampleMailable);
 
         $this->assertEquals(['john@example.com'], $mailer->later->first()->from->all());
     }
@@ -449,5 +433,68 @@ class MailThiefTest extends TestCase
         $messages = ["Message for foo@bar.tld", "Message for baz@qux.tld"];
 
         $this->assertEquals($messages, $mailer->subjects()->all());
+    }
+
+    public function test_it_gets_subjects_for_mailables()
+    {
+        $mailer = $this->getMailThief();
+
+        collect(['foo@bar.tld', 'baz@qux.tld'])->each(function ($email) use ($mailer) {
+            $mailer->send(
+                (new MailthiefTestSampleMailable)->subject("Message for {$email}")
+            );
+        });
+
+        $messages = ["Message for foo@bar.tld", "Message for baz@qux.tld"];
+
+        $this->assertEquals($messages, $mailer->subjects()->all());
+    }
+
+    public function test_can_send_mailables()
+    {
+        $mailer = $this->getMailThief();
+
+        $mailer->send(
+            (new MailthiefTestSampleMailable)
+                ->to('john@example.com')
+                ->subject('Sample subject')
+        );
+
+        $this->assertEquals(['john@example.com'], $mailer->lastMessage()->to->all());
+        $this->assertEquals('Sample subject', $mailer->lastMessage()->subject);
+        $this->assertEquals('stubbed rendered view', $mailer->lastMessage()->getBody());
+    }
+
+    public function test_can_create_pending_mail()
+    {
+        $mailer = $this->getMailThief();
+
+        $mailableMailerTo = $mailer->to('joe@example.com');
+        $mailableMailerBcc = $mailer->bcc('joe@example.com');
+
+        $this->assertInstanceOf(Illuminate\Mail\PendingMail::class, $mailableMailerTo);
+        $this->assertInstanceOf(Illuminate\Mail\PendingMail::class, $mailableMailerBcc);
+    }
+
+    public function test_can_send_pending_mail()
+    {
+        $mailer = $this->getMailThief();
+
+        $mailer->to('john@example.com')->send(
+            (new MailthiefTestSampleMailable)
+                ->subject('Sample subject')
+        );
+
+        $this->assertEquals(['john@example.com'], $mailer->lastMessage()->to->all());
+        $this->assertEquals('Sample subject', $mailer->lastMessage()->subject);
+        $this->assertEquals('stubbed rendered view', $mailer->lastMessage()->getBody());
+    }
+}
+
+class MailthiefTestSampleMailable extends Illuminate\Mail\Mailable
+{
+    public function build()
+    {
+        return $this->view('example-view', []);
     }
 }
