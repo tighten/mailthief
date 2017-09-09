@@ -9,6 +9,10 @@ class MailThiefServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->singleton(MailThief::class);
+        if ((float) $this->app->version() >= 5.5) {
+            $this->app->singleton(MailThiefFiveFiveCompatible::class);
+        } else {
+            $this->app->singleton(MailThiefFiveFourCompatible::class);
+        }
     }
 }
