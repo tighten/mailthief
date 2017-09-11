@@ -56,7 +56,7 @@ trait InteractsWithMail
     /** @before */
     public function hijackMail()
     {
-        if ((float) $this->app->version() >= 5.5) {
+        if (method_exists($this, 'afterApplicationCreated')) {
             $this->afterApplicationCreated(function () {
                 $this->getMailer()->hijack();
             });
