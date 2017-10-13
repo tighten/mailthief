@@ -18,7 +18,9 @@ trait InteractsWithMail
 
     private function getMailer()
     {
-        return $this->mailer ?: MailThief::getFacadeRoot();
+        return tap($this->mailer ?: MailThief::getFacadeRoot(), function ($mailer) {
+            $this->setMailer($mailer);
+        });
     }
 
     /**
