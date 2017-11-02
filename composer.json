@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "illuminate/mail": "5.*",
+        "illuminate/mail": "<5.4",
         "illuminate/view": "5.*"
     },
     "require-dev": {
