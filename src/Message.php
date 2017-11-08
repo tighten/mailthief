@@ -4,6 +4,7 @@ namespace MailThief;
 
 use Exception;
 use Illuminate\Support\Arr;
+use MailThief\Support\MailThiefCollection;
 
 class Message
 {
@@ -38,12 +39,12 @@ class Message
     {
         $this->view = $view;
         $this->data = $data;
-        $this->to = collect();
-        $this->cc = collect();
-        $this->bcc = collect();
-        $this->reply_to = collect();
-        $this->attachments = collect();
-        $this->headers = collect();
+        $this->to = new MailThiefCollection();
+        $this->cc = new MailThiefCollection();
+        $this->bcc = new MailThiefCollection();
+        $this->reply_to = new MailThiefCollection();
+        $this->attachments = new MailThiefCollection();
+        $this->headers = new MailThiefCollection();
     }
 
     public function __call($name, $arguments)
@@ -79,9 +80,9 @@ class Message
     public function to($address, $name = null, $override = false)
     {
         if ($override) {
-            $this->to = collect();
+            $this->to = new MailThiefCollection();
         }
-        
+
         if (! is_array($address)) {
             $address = $name ? [$address => $name] : [$address];
         }
@@ -130,7 +131,7 @@ class Message
             $address = $name ? [$address => $name] : [$address];
         }
 
-        $this->from = collect($address);
+        $this->from = new MailThiefCollection($address);
 
         return $this;
     }
@@ -141,7 +142,7 @@ class Message
             $address = $name ? [$address => $name] : [$address];
         }
 
-        $this->sender = collect($address);
+        $this->sender = new MailThiefCollection($address);
 
         return $this;
     }
