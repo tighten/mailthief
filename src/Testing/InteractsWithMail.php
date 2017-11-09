@@ -39,7 +39,7 @@ trait InteractsWithMail
      */
     public function getMessagesFor($emails)
     {
-        $emails = collect((array) $emails);
+        $emails = new MailThiefCollection((array) $emails);
 
         return $this->getMessages()->filter(function (Message $message) use ($emails) {
             return $emails->contains(function ($email) use ($message) {
