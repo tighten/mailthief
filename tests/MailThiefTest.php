@@ -453,7 +453,7 @@ class MailThiefTest extends TestCase
 
     public function test_it_sends_mailables()
     {
-        $mailer = $this->mailer = $this->getMailThief();
+        $mailer = $this->getMailThief();
         $mailable = new TestMailable();
         $mailable->to('john@example.com');
         $mailer->send($mailable);
