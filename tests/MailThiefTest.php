@@ -450,4 +450,13 @@ class MailThiefTest extends TestCase
 
         $this->assertEquals($messages, $mailer->subjects()->all());
     }
+
+    public function test_it_sends_mailables()
+    {
+        $mailer = $this->mailer = $this->getMailThief();
+        $mailable = new TestMailable();
+        $mailable->to('john@example.com');
+        $mailer->send($mailable);
+        $this->assertTrue($mailer->hasMessageFor('john@example.com'));
+    }
 }
