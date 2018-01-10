@@ -4,8 +4,6 @@ use Illuminate\Foundation\Application;
 
 class AppStub extends Application implements ArrayAccess
 {
-    private $foo;
-    private $mailer;
     protected $attributes = [];
 
     public function setAttributes($attributes)
