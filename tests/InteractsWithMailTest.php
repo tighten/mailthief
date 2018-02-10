@@ -190,4 +190,20 @@ class InteractsWithMailTest extends TestCase
         $this->seeMessageFrom('me@example.com');
         $this->seeMessageFrom('me@example.com', 'Example Person');
     }
+
+    public function test_with_mailables()
+    {
+        $mailer = $this->mailer = $this->getMailThief();
+
+        $mailable = new TestMailable();
+        $mailable->to('john@example.com')
+            ->from('me@example.com', 'Example Person')
+            ->subject('Message for you');
+
+        $mailer->send($mailable);
+
+        $this->seeMessageFrom('me@example.com');
+        $this->seeMessageFrom('me@example.com', 'Example Person');
+        $this->seeInSubjects('Message for you');
+    }
 }

@@ -2,14 +2,13 @@
 
 namespace MailThief;
 
-use Illuminate\Contracts\Mail\MailQueue;
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
+use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\HtmlString;
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use InvalidArgumentException;
 use MailThief\Support\MailThiefCollection;
 
@@ -60,6 +59,12 @@ abstract class MailThief
 
     public function send($view, array $data = [], $callback = null)
     {
+        if ($view instanceof Mailable) {
+            $view->send($this);
+
+            return;
+        }
+
         $callback = $callback ?: null;
 
         $data['message'] = new NullMessageForView;
