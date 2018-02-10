@@ -161,7 +161,10 @@ trait InteractsWithMail
         $subjects = (array) $subjects;
 
         foreach ($subjects as $subject) {
-            $this->assertTrue(in_array($subject, $this->getMailer()->subjects()->all()));
+            $this->assertTrue(
+                in_array($subject, $this->getMailer()->subjects()->all()),
+                "Subject not found: `{$subject}`"
+            );
         }
     }
 
