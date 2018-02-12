@@ -16,6 +16,6 @@ class VersionDetectionTest extends TestCase
         $this->assertEquals(5.6, MailThief::normalizeAppVersion('Lumen (5.6.1) (Laravel Components 5.6.*)'));
         $this->assertEquals(5.12, MailThief::normalizeAppVersion('Lumen (5.12.4) (Laravel Components 5.99.*)'));
         $this->assertEquals(10.2, MailThief::normalizeAppVersion('Lumen 10.2.123'));
-        $this->assertEquals(4.20, MailThief::normalizeAppVersion('Version 4.20.1423 of the Esteemd Lumen Framework, Blessed Be It'));
+        $this->assertEquals(4.20, MailThief::normalizeAppVersion('Version 4.20.1423 of the Esteemed Lumen Framework, Blessed Be It'));
     }
 }
