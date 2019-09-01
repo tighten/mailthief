@@ -6,6 +6,9 @@
 
 MailThief is a fake mailer for Laravel applications (5.0+) that makes it easy to test mail without actually sending any emails.
 
+#### Note: 
+Due to changes in the way mail testing is handled by Laravel; MailThief is not needed for recent versions of the framework. As such, MailThief will remain at Laravel 5.5.
+
 ## Quickstart
 
 Installation:
