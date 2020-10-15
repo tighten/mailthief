@@ -1,0 +1,49 @@
+name: tests
+
+on:
+  pull_request:
+
+jobs:
+  tests:
+    strategy:
+      matrix:
+        os: [macOS, Ubuntu, Windows]
+        php: [7.0, 7.1, 7.2]
+
+        include:
+          - os: macOS
+            os-version: macos-latest
+
+          - os: Ubuntu
+            os-version: ubuntu-latest
+
+          - os: Windows
+            os-version: windows-latest
+
+    name: ${{ matrix.os }} - PHP ${{ matrix.php }}
+
+    runs-on: ${{ matrix.os-version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-os-${{ matrix.os }}-php-${{ matrix.php }}-laravel-${{ matrix.laravel-version }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: dependencies-os-${{ matrix.os }}-php-${{ matrix.php }}-laravel-${{ matrix.laravel-version }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: posix, dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-suggest --ignore-platform-reqs
+
+      - name: Run tests
+        run: vendor/bin/phpunit
