@@ -1,10 +1,7 @@
 name: tests
 
 on:
-  #    push:
   pull_request:
-  #  schedule:
-  #  - cron: '0 0 * * *'
 
 jobs:
   tests:
@@ -15,20 +12,15 @@ jobs:
 
         include:
           - os: macOS
-            experimental: false
             os-version: macos-latest
 
           - os: Ubuntu
-            experimental: true
             os-version: ubuntu-latest
 
           - os: Windows
-            experimental: true
             os-version: windows-latest
 
     name: ${{ matrix.os }} - PHP ${{ matrix.php }} --${{ matrix.dependency }}
-
-    continue-on-error: ${{ matrix.experimental }}
 
     runs-on: ${{ matrix.os-version }}
 
