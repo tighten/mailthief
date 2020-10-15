@@ -1,5 +1,4 @@
-[![Codeship Status for tightenco/mailthief](https://codeship.com/projects/860d2030-1ae7-0134-a954-66ed86225da0/status?branch=master)](https://codeship.com/projects/159501)
-
+[![Github Actions Status](https://github.com/tighten/mailthief/workflows/tests/badge.svg)](https://github.com/tighten/mailthief/actions)
 ![MailThief Logo](https://raw.githubusercontent.com/tightenco/mailthief/master/mailthief-banner.png)
 
 # MailThief
