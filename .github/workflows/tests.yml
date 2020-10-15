@@ -20,7 +20,7 @@ jobs:
           - os: Windows
             os-version: windows-latest
 
-    name: ${{ matrix.os }} - PHP ${{ matrix.php }} --${{ matrix.dependency }}
+    name: ${{ matrix.os }} - PHP ${{ matrix.php }}
 
     runs-on: ${{ matrix.os-version }}
 
