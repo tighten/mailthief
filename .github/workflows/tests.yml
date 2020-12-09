@@ -1,14 +1,13 @@
 name: tests
 
-on:
-  pull_request:
+on: [pull_request]
 
 jobs:
   tests:
     strategy:
       matrix:
         os: [macOS, Ubuntu, Windows]
-        php: [7.0, 7.1, 7.2]
+        php: [7.0, 7.1, 7.2, 7.3, 7.4]
 
         include:
           - os: macOS

@@ -4,7 +4,7 @@ use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\View\Factory;
 use MailThief\MailThiefFiveFourCompatible;
 
-abstract class TestCase extends PHPUnit_Framework_TestCase
+abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     protected function getViewFactory()
     {
