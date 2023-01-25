@@ -1,5 +1,5 @@
 [![Github Actions Status](https://github.com/tighten/mailthief/workflows/tests/badge.svg)](https://github.com/tighten/mailthief/actions)
-![MailThief Logo](https://raw.githubusercontent.com/tightenco/mailthief/master/mailthief-banner.png)
+![MailThief Logo](https://raw.githubusercontent.com/tightenco/mailthief/main/mailthief-banner.png)
 
 # MailThief
 
