@@ -26,5 +26,10 @@
         "classmap": [
             "tests/TestCase.php"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "kylekatarnls/update-helper": true
+        }
     }
 }
