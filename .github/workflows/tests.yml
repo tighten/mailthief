@@ -42,7 +42,7 @@ jobs:
           coverage: none
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-interaction --no-suggest --ignore-platform-reqs
+        run: composer install --prefer-dist --no-interaction
 
       - name: Run tests
         run: vendor/bin/phpunit
